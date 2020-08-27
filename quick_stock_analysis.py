@@ -11,8 +11,10 @@ from pandas import ExcelWriter
 
 yf.pdr_override()
 
+no_info="No Information Available"
+
 ### Number seperated by commas ex 1,000,000
-def place_value(number):
+def number_commas(number):
     return ("{:,}".format(number))
 
 ### ASK FOR STOCK TICKER
@@ -65,21 +67,42 @@ stock.info["marketCap"]
     # Calculate Price to Earnings Ratio
 
 
-
-### PRINT OUT RESULTS
 print("")
-print(" ~~~ QUICK ANALYSIS RESULTS ~~~")
+print("/// QUICK ANALYSIS REPORT ///")
 print(("{} , {}").format((stock.info["shortName"]),stock_ticker))
+print(("Market Sector : {}").format(stock.info["sector"]))
+print(("Investment Type : {}").format(no_info))
+print("")
+
+print("/// DATE RANGE ///")
 print(("Starting Date is : {}").format(start_date))
 print(("Ending Date is : {}").format(end_date))
 print("")
 
-print(" /// COMPANY STATS /// ")
-print(("Market Sector = {}").format(stock.info["sector"]))
-# print(str(stock_historical))
-print(("Price Per Share = $ {} ").format(place_value(stock.info["regularMarketPrice"])))
-print(("Market Cap = $ {} ").format(place_value(stock.info["marketCap"])))
-print(("Trailing Price To Sales Ratio = {}").format(round(stock.info["priceToSalesTrailing12Months"],2)))
-
+print("/// CURRENT VALUATION ///")
+print(("Stock Price : $ {} ").format(number_commas(stock.info["regularMarketPrice"])))
+print(("Market Cap : $ {} ").format(number_commas(stock.info["marketCap"])))
+print(("Trailing PS Ratio : {}").format(round(stock.info["priceToSalesTrailing12Months"],2)))
+print(("Current Growth Rate : {}").format(no_info))
 print("")
-# print(stock.financials)
+
+print("/// INTRINSIC VALUE METRICS ///")
+print(("Stock Price : {}").format(no_info))
+print(("Market Cap : {}").format(no_info))
+print(("Price To Sales Metric : {}").format(no_info))
+print("")
+
+print("/// HYPE METRICS ///")
+print(("Stock Price : {}").format(no_info))
+print(("Market Cap  : {}").format(no_info))
+print(("Hype Ratio  : {}").format(no_info))
+print(("Hype Years  : {}").format(no_info))
+print("")
+
+print("/// 5 YEAR PROJECTIONS BASED ON PRICE TO SALES RATIO ///")
+print(("Bad Hype Outlook (2x)       | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+print(("Below Avg Hype Outlook (3x) | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+print(("Average Outlook (4x)        | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+print(("Above Average Outlook (5x)  | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+print(("Exceptional Outlook (6x)    | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+print("")
