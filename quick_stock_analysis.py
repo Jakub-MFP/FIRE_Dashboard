@@ -46,27 +46,35 @@ start_date = dt.datetime(int(start_year), int(start_month), int(start_day))
 
 
 
-### CURRENT VALUATION ###
+### CURRENT MARKET VALUATION ###
     # User submits the growth rate for the stock
-submit_growth_rate = input("What is the current growth rate? (ex 20.50)  ")
-submit_growth_rate = int(submit_growth_rate)
+submit_growth_rate = int(input("What is the current growth rate? (ex 20.50)  "))
+submit_growth_rate = float(submit_growth_rate)
 
     # Converts the submitted growth rate into a decimal
-current_growth_rate = submit_growth_rate / 100
+current_growth_rate = float(submit_growth_rate / 100)
 
 
 
 ### INTRINSIC VAUE METRICS ###
-intrinsic_market_cap = 0
-intrinsic_stock_price = 0
-intrinsic_price_to_sales_ratio = 0
+intrinsic_price_to_sales_ratio = 4
+intrinsic_market_cap = ((int((stock.info["marketCap"])) / (int(stock.info["priceToSalesTrailing12Months"]))) * int(intrinsic_price_to_sales_ratio))
+intrinsic_stock_price = ((int((stock.info["regularMarketPrice"])) / (int(stock.info["priceToSalesTrailing12Months"]))) * int(intrinsic_price_to_sales_ratio))
+
 
 
 ### HYPE VALUE METRICS ###
-hype_ratio = 0
-hype_stock_price = 0
-hype_market_cap = 0
-hype_market_years = 0
+hype_stock_price = (int((stock.info["regularMarketPrice"])) - (int(intrinsic_stock_price)))
+hype_market_cap = ((stock.info["marketCap"]) - (intrinsic_market_cap))
+hype_ratio = (hype_market_cap / intrinsic_market_cap)
+
+    # FORUMLA t = ln(A/P) / ln(1 + r) https://www.calculatorsoup.com/calculators/financial/compound-interest-calculator.php
+hype_A = int(stock.info["marketCap"])
+hype_P = int(intrinsic_market_cap)
+hype_r = current_growth_rate
+hype_market_years = round(((math.log(hype_A/hype_P)) / (math.log(1+hype_r))),2)
+    # print(("A = {}, P = {}, r = {}").format(hype_A, hype_P, hype_r))
+
 
 
 ### FIVE YEAR PROJECTIONS BASED ON PRICE TO SALES RATIO ###
@@ -110,7 +118,7 @@ print(("Starting Date is : {}").format(start_date))
 print(("Ending Date is : {}").format(end_date))
 print("")
 
-print("/// CURRENT VALUATION ///")
+print("/// CURRENT MARKET VALUATION ///")
 print(("Stock Price : $ {} ").format(number_commas(stock.info["regularMarketPrice"])))
 print(("Market Cap : $ {} ").format(number_commas(stock.info["marketCap"])))
 print(("Trailing PS Ratio : {}").format(round(stock.info["priceToSalesTrailing12Months"],2)))
@@ -118,22 +126,24 @@ print(("Current Growth Rate : {} %").format(submit_growth_rate))
 print("")
 
 print("/// INTRINSIC VALUE METRICS ///")
-print(("Stock Price : {}").format(no_info))
-print(("Market Cap : {}").format(no_info))
-print(("Price To Sales Metric : {}").format(no_info))
+print(("Stock Price : $ {}").format(number_commas(intrinsic_stock_price)))
+print(("Market Cap : $ {}").format(number_commas(intrinsic_market_cap)))
+print(("Price To Sales Metric : {}:1").format(intrinsic_price_to_sales_ratio))
 print("")
 
 print("/// HYPE METRICS ///")
-print(("Stock Price : {}").format(no_info))
-print(("Market Cap  : {}").format(no_info))
-print(("Hype Ratio  : {}").format(no_info))
-print(("Hype Years  : {}").format(no_info))
+print(("Stock Price : $ {}").format(number_commas(hype_stock_price)))
+print(("Market Cap  : $ {}").format(number_commas(hype_market_cap)))
+print(("Hype Ratio  : {}").format(hype_ratio))
+print(("Hype Years  : {} Years").format(hype_market_years))
 print("")
 
-print("/// 5 YEAR PROJECTIONS BASED ON PRICE TO SALES RATIO ///")
-print(("No Faith In Market Outlook (2x)    | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
-print(("Below Market Value Outlook (3x)    | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
-print(("Standard Market Value Outlook (4x) | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
-print(("Some Hype Outlook (5x)             | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
-print(("Exceptional Hype Outlook (6x)      | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
-print("")
+# print("/// 5 YEAR PROJECTIONS BASED ON PRICE TO SALES RATIO ///")
+# print(("No Faith In Market Outlook (2x)    | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+# print(("Below Market Value Outlook (3x)    | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+# print(("Standard Market Value Outlook (4x) | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+# print(("Some Hype Outlook (5x)             | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+# print(("Exceptional Hype Outlook (6x)      | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
+# print("")
+
+
