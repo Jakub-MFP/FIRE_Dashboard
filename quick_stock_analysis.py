@@ -146,4 +146,4 @@ print("")
 # print(("Exceptional Hype Outlook (6x)      | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
 # print("")
 
-
+# terst coment
