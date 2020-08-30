@@ -20,11 +20,14 @@ from quick_stock_analysis import stock_ticker
 
 
 
-### IMPORTS KEYS AND RANDOMIZES THEM ###
+### IMPORTS KEY FROM KEYS FILE ###
 lines = open('keys').read().splitlines()
 keys=random.choice(lines)
 
 ts = TimeSeries (key=keys, output_format = "pandas")
+
+
+
 cs = CryptoCurrencies (key=keys, output_format = "pandas")
 ti = TechIndicators (key=keys, output_format = "pandas")
 sp = SectorPerformances (key=keys, output_format = "pandas")
@@ -41,18 +44,16 @@ demo = "N/A"
     ### STOCK TIME SERIES > DAILY ADJUSTED ###
         # Date / Open / High / Low / Close / Adjusted Close / Volume / Dividend / Split
 data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='compact')
-    
-    # last_adjusted_price
-adjusted_close_column = data_daily['5. adjusted close']
-last_adjusted_price = adjusted_close_column[0]
+    #data_daily['column name'][row number]
+data_daily_last_open_price = data_daily['1. open'][0]
+data_daily_high_price = data_daily['2. high'][0]
+data_daily_low_price = data_daily['3. low'][0]
+data_daily_last_adjusted_price = data_daily['5. adjusted close'][0]
+data_daily_trading_volume = data_daily['6. volume'][0]
+data_daily_divident_amount = data_daily['7. divident amount'][0]
 
-    # last_open_price
-daily_open_column = data_daily['1. open']
-last_open_price = daily_open_column[0]
 
-    # last_daily_volume
-daily_volume_column = data_daily['6. volume']
-last_daily_volume = daily_volume_column[0]
+
 
 
 
@@ -65,23 +66,18 @@ last_daily_volume = daily_volume_column[0]
 
     ### FUNDAMENTAL DATA > INCOME STATEMENT ###
     # https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo
-data_income_statement, meta_data = fd.get_INCOME_STATEMENT(symbol=stock_ticker, outputsize ='compact')
+#data_income_statement, meta_data = fd.get_INCOME_STATEMENT(symbol=stock_ticker, outputsize ='compact')
 
 
 
 # #Testing Ground
-print(data_income_statement)
-print("""
-
-
-""")
-print(("demo : {}").format(demo))
-print(("demo : {}").format(demo))
-print(("demo : {}").format(demo))
-print(("demo : {}").format(demo))
-print(("demo : {}").format(demo))
-print(("demo : {}").format(demo))
 
 
 
 
+# print(("demo : {}").format(demo))
+# print(("demo : {}").format(demo))
+# print(("demo : {}").format(demo))
+# print(("demo : {}").format(demo))
+# print(("demo : {}").format(demo))
+# print(("demo : {}").format(demo))
