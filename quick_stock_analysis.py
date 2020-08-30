@@ -1,13 +1,6 @@
-import pandas as pd
-from pandas_datareader import data as pdr
 import numpy as np
 import yfinance as yf
 import datetime as dt
-from pandas_datareader import data as pdr
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
-import os
-from pandas import ExcelWriter
 import math
 
 yf.pdr_override()
@@ -22,7 +15,6 @@ def number_commas(number):
 stock_ticker = input("Enter a stock ticker symbol: ")
 stock = yf.Ticker(str(stock_ticker))
 stock.info
-
 
 
 ### STARTING DATE AND TIME ###
@@ -78,6 +70,11 @@ hype_market_years = round(((math.log(hype_A/hype_P)) / (math.log(1+hype_r))),2)
 
 
 ### FIVE YEAR PROJECTIONS BASED ON PRICE TO SALES RATIO ###
+    # 5 YEAR PROJECTION STATS
+        # What will the sales be in 5 years? 
+
+        # What will the intrinsic market cap be in 5 years? 
+
     # NO FAITH IN MARKET OUTLOOK (2x) 
 five_year_no_faith_price = 0
 five_year_no_faith_total_roi = 0
@@ -145,5 +142,3 @@ print("")
 # print(("Some Hype Outlook (5x)             | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
 # print(("Exceptional Hype Outlook (6x)      | Stock Price : $ {} , Total ROI {}% , CAGR {}%").format(no_info, no_info, no_info))
 # print("")
-
-# terst coment
