@@ -1,0 +1,2 @@
+# ONLY ADD LISTS OF STOCKS TO FILTER THROUGH HERE
+    # SP500, Nasdaq, Russell Index Ect
