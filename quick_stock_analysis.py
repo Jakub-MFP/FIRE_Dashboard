@@ -1,6 +1,5 @@
-import numpy as np
-import yfinance as yf
-import datetime as dt
-import math
+### QUICK STOCK ANALYSIS DASHBOARD ###
+# FOR INDIVIDUAL STOCK ANALYSIS #
 
-stock_ticker = "MSFT"
+#stock_ticker = input("Enter a stock ticker symbol: ")
+stock_ticker = 'IBM'
