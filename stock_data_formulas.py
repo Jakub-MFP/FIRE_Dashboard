@@ -1,21 +1,22 @@
 # ENTER OBJECTS TO GET CERTAIN STOCK DATA HERE
-    # This file will have all the formulas to find the various stock metrics 
+    # This file will have all the formulas to find the various stock data points 
     # like daily price, PS , PE , balance sheet info ect. 
-    # Any metric anyone wants they can create a class for it here. 
+    # Any metric anyone wants they can create it here
 
-import pandas as pd
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.cryptocurrencies import CryptoCurrencies
 from alpha_vantage.techindicators import TechIndicators
 from alpha_vantage.sectorperformance import SectorPerformances
 from alpha_vantage.alphavantage import AlphaVantage
-
+import pandas as pd
 import time
 import random
 import numpy as np
 import math
 import datetime as dt
-    # Import stock ticker to be used from quick_stock_analysis.py
+import requests
+import os
+import json
 from quick_stock_analysis import stock_ticker
 
 
@@ -31,9 +32,7 @@ sp = SectorPerformances (key=keys, output_format = "pandas")
 av = AlphaVantage (key=keys, output_format = "pandas")
 
 demo = "N/A"
-### DO NOT EEDIT THIS ###
-
-
+### ^^^ DON'T EDIT ^^^ ###
 
 ### CALLING APIs FROM ALPHA VANTAGE TO ORGANIZE INTO INDIVIDUAL DATA POINTS ###
     # https://www.alphavantage.co/documentation/
@@ -43,7 +42,8 @@ demo = "N/A"
 # All active Stocks for last trading day
     # https://www.alphavantage.co/query?function=LISTING_STATUS&apikey=demo
     # Fundamental Data > Listing & Delisting Status
-data_daily_lastActiveStocks = []
+data_daily_lastActiveStocks = "need to make forumla"
+data_overview_Alpha = "need to make forumla"
 
 
 
@@ -58,75 +58,75 @@ data_daily_lastAdjustedClosingPrice = data_daily['5. adjusted close'][0]
 data_daily_lastTradingVolume = data_daily['6. volume'][0]
 data_daily_lastDividendAmount = data_daily['7. dividend amount'][0]
 
-# print(data_daily_dividend_amount)
-# print(data_daily_last_open_price)
-# print(data_daily_last_adjusted_price)
-
 
 
     ### FUNADMENTAL DATA > COMPANY OVERVIEW ###
     # https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=demo
-    # DEMO DATA
-#data_company_overview, meta_data = av.overview(symbol=stock_ticker, outputsize ='full')
-data_overview_Name = "International Business Machines Corporation"
-data_overview_AssetType = "Common Stock" 
-data_overview_Description = "blah blah" 
-data_overview_Exchange = "NYSE"
-data_overview_Currency = "USD"
-data_overview_Country = "USA"   
-data_overview_Sector = "Technology"
-data_overview_Industry = "Information Techonology Services"
-data_overview_Address = "address"
-data_overview_FullTimeEmployees = "352600"
-data_overview_FiscalYearEnd = "December"
-data_overview_FiscalYearEnd = "2020-06-30"
-data_overview_MarketCapitilization = 111384715264
-data_overview_EBITDA = 0
-data_overview_PERatio = 0
-data_overview_PEGRatio = 0
-data_overview_BookValue = 0
-data_overview_DividendPerShare = 6.52
-data_overview_DividendYield = 0.0523
-data_overview_EPS = 0
-data_overview_RevenuesPerShareTTM = 0
-data_overview_ProfitMargin = 0.1043
-data_overview_OperatingMarginTTM = 0.1185
-data_overview_ReturnOnAssetsTTM = 0
-data_overview_ReturnOnEquityTTM = 0
-data_overview_RevenueTTM = 75499003904
-data_overview_GrossProfitTTM = 36489000000
-data_overview_DilutedEPSTTM = 0
-data_overview_QuarterlyEarningsGrowthYOY = -0.458
-data_overview_QuarterlyRevenueGrowthYOY = -0.054
-data_overview_AnalystTargetPrice = 135.19
-data_overview_TrailingPE = 14.1327
-data_overview_ForwardPE = 11.2867
-data_overview_PriceToSalesRatioTTM = 1.4762
-data_overview_PriceToBookRatio = 5.4017
-data_overview_EVToRevenue = 0
-data_overview_EVToEBITD = 0
-data_overview_Beta = 1.2071
-data_overview_52WeekHigh = 158.75
-data_overview_52WeekLow = 90.56
-data_overview_50DayMovingAverage = 124.6553
-data_overview_200DayMovingAverage = 123.1466
-data_overview_SharesOutstanding = 890579008
-data_overview_SharesFloat = 889189445
-data_overview_SharesShort = 21600483
-data_overview_SharesShortPriorMonth = 23242369
-data_overview_ShortRatio = 4.51
-data_overview_ShortPercentOutstanding = 0.02
-data_overview_ShortPercentFloat = 0.0243
-data_overview_PercentInsiders = 0.108
-data_overview_PercentInstitutions = 58.555
-data_overview_ForwardAnnualDividendRate = 6.52
-data_overview_ForwardAnnualDividendYield = 0.0523
-data_overview_PayoutRatio = 0.7358
-data_overview_DividendDate = "2020-09-10"
-data_overview_ExDividendDate = "2020-08-07"
-data_overview_LastSplitFactor = "2:1"
-data_overview_LastSplitDate = "1999-05-27"
-data_overview_Alpha = 1.2071
+
+base_url = 'https://www.alphavantage.co/query?'
+params = {'function': 'OVERVIEW',
+		 'symbol': stock_ticker,
+		 'apikey': keys}
+response_data_overview = requests.get(base_url, params=params)
+
+data_overview_Name = response_data_overview.json()['Name']
+data_overview_AssetType = response_data_overview.json()['AssetType']
+data_overview_Description = response_data_overview.json()['Description']
+data_overview_Exchange = response_data_overview.json()['Exchange']
+data_overview_Currency = response_data_overview.json()['Currency']
+data_overview_Country = response_data_overview.json()['Country']
+data_overview_Sector = response_data_overview.json()['Sector']
+data_overview_Industry = response_data_overview.json()['Industry']
+data_overview_Address = response_data_overview.json()['Address']
+data_overview_FullTimeEmployees = response_data_overview.json()['FullTimeEmployees']
+data_overview_FiscalYearEnd = response_data_overview.json()['FiscalYearEnd']
+data_overview_FiscalYearEnd = response_data_overview.json()['FiscalYearEnd']
+data_overview_MarketCapitalization = response_data_overview.json()['MarketCapitalization']
+data_overview_EBITDA = response_data_overview.json()['EBITDA']
+data_overview_PERatio = response_data_overview.json()['PERatio']
+data_overview_PEGRatio = response_data_overview.json()['PEGRatio']
+data_overview_BookValue = response_data_overview.json()['BookValue']
+data_overview_DividendPerShare = response_data_overview.json()['DividendPerShare']
+data_overview_DividendYield = response_data_overview.json()['DividendYield']
+data_overview_EPS = response_data_overview.json()['EPS']
+data_overview_RevenuePerShareTTM = response_data_overview.json()['RevenuePerShareTTM']
+data_overview_ProfitMargin = response_data_overview.json()['ProfitMargin']
+data_overview_OperatingMarginTTM = response_data_overview.json()['OperatingMarginTTM']
+data_overview_ReturnOnAssetsTTM = response_data_overview.json()['ReturnOnAssetsTTM']
+data_overview_ReturnOnEquityTTM = response_data_overview.json()['ReturnOnEquityTTM']
+data_overview_RevenueTTM = response_data_overview.json()['RevenueTTM']
+data_overview_GrossProfitTTM = response_data_overview.json()['GrossProfitTTM']
+data_overview_DilutedEPSTTM = response_data_overview.json()['DilutedEPSTTM']
+data_overview_QuarterlyEarningsGrowthYOY = response_data_overview.json()['QuarterlyEarningsGrowthYOY']
+data_overview_QuarterlyRevenueGrowthYOY = response_data_overview.json()['QuarterlyRevenueGrowthYOY']
+data_overview_AnalystTargetPrice = response_data_overview.json()['AnalystTargetPrice']
+data_overview_TrailingPE = response_data_overview.json()['TrailingPE']
+data_overview_ForwardPE = response_data_overview.json()['ForwardPE']
+data_overview_PriceToSalesRatioTTM = response_data_overview.json()['PriceToSalesRatioTTM']
+data_overview_PriceToBookRatio = response_data_overview.json()['PriceToBookRatio']
+data_overview_EVToRevenue = response_data_overview.json()['EVToRevenue']
+data_overview_EVToEBITDA = response_data_overview.json()['EVToEBITDA']
+data_overview_Beta = response_data_overview.json()['Beta']
+data_overview_52WeekHigh = response_data_overview.json()['52WeekHigh']
+data_overview_52WeekLow = response_data_overview.json()['52WeekLow']
+data_overview_50DayMovingAverage = response_data_overview.json()['50DayMovingAverage']
+data_overview_200DayMovingAverage = response_data_overview.json()['200DayMovingAverage']
+data_overview_SharesOutstanding = response_data_overview.json()['SharesOutstanding']
+data_overview_SharesFloat = response_data_overview.json()['SharesFloat']
+data_overview_SharesShort = response_data_overview.json()['SharesShort']
+data_overview_SharesShortPriorMonth = response_data_overview.json()['SharesShortPriorMonth']
+data_overview_ShortRatio = response_data_overview.json()['ShortRatio']
+data_overview_ShortPercentOutstanding = response_data_overview.json()['ShortPercentOutstanding']
+data_overview_ShortPercentFloat = response_data_overview.json()['ShortPercentFloat']
+data_overview_PercentInsiders = response_data_overview.json()['PercentInsiders']
+data_overview_PercentInstitutions = response_data_overview.json()['PercentInstitutions']
+data_overview_ForwardAnnualDividendRate = response_data_overview.json()['ForwardAnnualDividendRate']
+data_overview_ForwardAnnualDividendYield = response_data_overview.json()['ForwardAnnualDividendYield']
+data_overview_PayoutRatio = response_data_overview.json()['PayoutRatio']
+data_overview_DividendDate = response_data_overview.json()['DividendDate']
+data_overview_ExDividendDate = response_data_overview.json()['ExDividendDate']
+data_overview_LastSplitFactor = response_data_overview.json()['LastSplitFactor']
+data_overview_LastSplitDate = response_data_overview.json()['LastSplitDate']
 
 
 
@@ -134,70 +134,78 @@ data_overview_Alpha = 1.2071
     # https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo
     # We can have data be <annual> or <quarterly> 
         # date is denaoted by "fiscalDateEnding"
-    # DEMO DATA
-#data_income_statement, meta_data = fd.get_INCOME_STATEMENT(symbol=stock_ticker, outputsize ='compact')
-    
+
+base_url = 'https://www.alphavantage.co/query?'
+params = {'function': 'INCOME_STATEMENT',
+		 'symbol': stock_ticker,
+		 'apikey': keys}
+response_data_income = requests.get(base_url, params=params)
+
+
+
     # LAST ANNUAL INCOME STATEMENT RESULTS
-data_income_annual_last_fiscalDateEnding = 0
-data_income_annual_last_reportedCurrency = 0
-data_income_annual_last_totalRevenue = 0
-data_income_annual_last_totalOperatingExpense = 0
-data_income_annual_last_costOfRevenue = 0
-data_income_annual_last_grossProfit = 0
-data_income_annual_last_ebit = 0
-data_income_annual_last_netIncome = 0
-data_income_annual_last_researchAndDevelopment = 0
-data_income_annual_last_effectOfAccountingCharges = 0
-data_income_annual_last_incomeBeforeTax = 0
-data_income_annual_last_minorityInterest = 0
-data_income_annual_last_sellingGeneralAdministrative = 0
-data_income_annual_last_otherNonOperatingIncome = 0
-data_income_annual_last_operatingIncome = 0
-data_income_annual_last_otherOperatingExpense = 0
-data_income_annual_last_interestExpense = 0
-data_income_annual_last_taxProvision = 0
-data_income_annual_last_interestIncome = 0
-data_income_annual_last_netInterestIncome = 0
-data_income_annual_last_extraordinaryItems = 0
-data_income_annual_last_nonRecurring = 0
-data_income_annual_last_otherItems = 0
-data_income_annual_last_incomeTaxExpense = 0
-data_income_annual_last_totalOtherIncomeExpense = 0
-data_income_annual_last_discontinuedOperations = 0
-data_income_annual_last_netIncomeFromContinuingOperations = 0
-data_income_annual_last_netIncomeApplicableToCommonShares = 0
-data_income_annual_last_preferredStockAndOtherAdjustments = 0
+data_income_annual_last_fiscalDateEnding = response_data_income.json()['annualReports'][0]['fiscalDateEnding']
+data_income_annual_last_reportedCurrency = response_data_income.json()['annualReports'][0]['reportedCurrency']
+data_income_annual_last_totalRevenue = response_data_income.json()['annualReports'][0]['totalRevenue']
+data_income_annual_last_totalOperatingExpense = response_data_income.json()['annualReports'][0]['totalOperatingExpense']
+data_income_annual_last_costOfRevenue = response_data_income.json()['annualReports'][0]['costOfRevenue']
+data_income_annual_last_grossProfit = response_data_income.json()['annualReports'][0]['grossProfit']
+data_income_annual_last_ebit = response_data_income.json()['annualReports'][0]['ebit']
+data_income_annual_last_netIncome = response_data_income.json()['annualReports'][0]['netIncome']
+data_income_annual_last_researchAndDevelopment = response_data_income.json()['annualReports'][0]['researchAndDevelopment']
+data_income_annual_last_effectOfAccountingCharges = response_data_income.json()['annualReports'][0]['effectOfAccountingCharges']
+data_income_annual_last_incomeBeforeTax = response_data_income.json()['annualReports'][0]['incomeBeforeTax']
+data_income_annual_last_minorityInterest = response_data_income.json()['annualReports'][0]['minorityInterest']
+data_income_annual_last_sellingGeneralAdministrative = response_data_income.json()['annualReports'][0]['sellingGeneralAdministrative']
+data_income_annual_last_otherNonOperatingIncome = response_data_income.json()['annualReports'][0]['otherNonOperatingIncome']
+data_income_annual_last_operatingIncome = response_data_income.json()['annualReports'][0]['operatingIncome']
+data_income_annual_last_otherOperatingExpense = response_data_income.json()['annualReports'][0]['otherOperatingExpense']
+data_income_annual_last_interestExpense = response_data_income.json()['annualReports'][0]['interestExpense']
+data_income_annual_last_taxProvision = response_data_income.json()['annualReports'][0]['taxProvision']
+data_income_annual_last_interestIncome = response_data_income.json()['annualReports'][0]['interestIncome']
+data_income_annual_last_netInterestIncome = response_data_income.json()['annualReports'][0]['netInterestIncome']
+data_income_annual_last_extraordinaryItems = response_data_income.json()['annualReports'][0]['extraordinaryItems']
+data_income_annual_last_nonRecurring = response_data_income.json()['annualReports'][0]['nonRecurring']
+data_income_annual_last_otherItems = response_data_income.json()['annualReports'][0]['otherItems']
+data_income_annual_last_incomeTaxExpense = response_data_income.json()['annualReports'][0]['incomeTaxExpense']
+data_income_annual_last_totalOtherIncomeExpense = response_data_income.json()['annualReports'][0]['totalOtherIncomeExpense']
+data_income_annual_last_discontinuedOperations = response_data_income.json()['annualReports'][0]['discontinuedOperations']
+data_income_annual_last_netIncomeFromContinuingOperations = response_data_income.json()['annualReports'][0]['netIncomeFromContinuingOperations']
+data_income_annual_last_netIncomeApplicableToCommonShares = response_data_income.json()['annualReports'][0]['netIncomeApplicableToCommonShares']
+data_income_annual_last_preferredStockAndOtherAdjustments = response_data_income.json()['annualReports'][0]['preferredStockAndOtherAdjustments']
+
+
 
     # LAST QUARTERLY INCOME STATEMENT RESULTS
-data_income_quarterly_last_fiscalDateEnding = 0
-data_income_quarterly_last_reportedCurrency = 0
-data_income_quarterly_last_totalRevenue = 0
-data_income_quarterly_last_totalOperatingExpense = 0
-data_income_quarterly_last_costOfRevenue = 0
-data_income_quarterly_last_grossProfit = 0
-data_income_quarterly_last_ebit = 0
-data_income_quarterly_last_netIncome = 0
-data_income_quarterly_last_researchAndDevelopment = 0
-data_income_quarterly_last_effectOfAccountingCharges = 0
-data_income_quarterly_last_incomeBeforeTax = 0
-data_income_quarterly_last_minorityInterest = 0
-data_income_quarterly_last_sellingGeneralAdministrative = 0
-data_income_quarterly_last_otherNonOperatingIncome = 0
-data_income_quarterly_last_operatingIncome = 0
-data_income_quarterly_last_otherOperatingExpense = 0
-data_income_quarterly_last_interestExpense = 0
-data_income_quarterly_last_taxProvision = 0
-data_income_quarterly_last_interestIncome = 0
-data_income_quarterly_last_netInterestIncome = 0
-data_income_quarterly_last_extraordinaryItems = 0
-data_income_quarterly_last_nonRecurring = 0
-data_income_quarterly_last_otherItems = 0
-data_income_quarterly_last_incomeTaxExpense = 0
-data_income_quarterly_last_totalOtherIncomeExpense = 0
-data_income_quarterly_last_discontinuedOperations = 0
-data_income_quarterly_last_netIncomeFromContinuingOperations = 0
-data_income_quarterly_last_netIncomeApplicableToCommonShares = 0
-data_income_quarterly_last_preferredStockAndOtherAdjustments = 0
+data_income_quarterly_last_fiscalDateEnding = response_data_income.json()['quarterlyReports'][0]['fiscalDateEnding']
+data_income_quarterly_last_reportedCurrency = response_data_income.json()['quarterlyReports'][0]['reportedCurrency']
+data_income_quarterly_last_totalRevenue = response_data_income.json()['quarterlyReports'][0]['totalRevenue']
+data_income_quarterly_last_totalOperatingExpense = response_data_income.json()['quarterlyReports'][0]['totalOperatingExpense']
+data_income_quarterly_last_costOfRevenue = response_data_income.json()['quarterlyReports'][0]['costOfRevenue']
+data_income_quarterly_last_grossProfit = response_data_income.json()['quarterlyReports'][0]['grossProfit']
+data_income_quarterly_last_ebit = response_data_income.json()['quarterlyReports'][0]['ebit']
+data_income_quarterly_last_netIncome = response_data_income.json()['quarterlyReports'][0]['netIncome']
+data_income_quarterly_last_researchAndDevelopment = response_data_income.json()['quarterlyReports'][0]['researchAndDevelopment']
+data_income_quarterly_last_effectOfAccountingCharges = response_data_income.json()['quarterlyReports'][0]['effectOfAccountingCharges']
+data_income_quarterly_last_incomeBeforeTax = response_data_income.json()['quarterlyReports'][0]['incomeBeforeTax']
+data_income_quarterly_last_minorityInterest = response_data_income.json()['quarterlyReports'][0]['minorityInterest']
+data_income_quarterly_last_sellingGeneralAdministrative = response_data_income.json()['quarterlyReports'][0]['sellingGeneralAdministrative']
+data_income_quarterly_last_otherNonOperatingIncome = response_data_income.json()['quarterlyReports'][0]['otherNonOperatingIncome']
+data_income_quarterly_last_operatingIncome = response_data_income.json()['quarterlyReports'][0]['operatingIncome']
+data_income_quarterly_last_otherOperatingExpense = response_data_income.json()['quarterlyReports'][0]['otherOperatingExpense']
+data_income_quarterly_last_interestExpense = response_data_income.json()['quarterlyReports'][0]['interestExpense']
+data_income_quarterly_last_taxProvision = response_data_income.json()['quarterlyReports'][0]['taxProvision']
+data_income_quarterly_last_interestIncome = response_data_income.json()['quarterlyReports'][0]['interestIncome']
+data_income_quarterly_last_netInterestIncome = response_data_income.json()['quarterlyReports'][0]['netInterestIncome']
+data_income_quarterly_last_extraordinaryItems = response_data_income.json()['quarterlyReports'][0]['extraordinaryItems']
+data_income_quarterly_last_nonRecurring = response_data_income.json()['quarterlyReports'][0]['nonRecurring']
+data_income_quarterly_last_otherItems = response_data_income.json()['quarterlyReports'][0]['otherItems']
+data_income_quarterly_last_incomeTaxExpense = response_data_income.json()['quarterlyReports'][0]['incomeTaxExpense']
+data_income_quarterly_last_totalOtherIncomeExpense = response_data_income.json()['quarterlyReports'][0]['totalOtherIncomeExpense']
+data_income_quarterly_last_discontinuedOperations = response_data_income.json()['quarterlyReports'][0]['discontinuedOperations']
+data_income_quarterly_last_netIncomeFromContinuingOperations = response_data_income.json()['quarterlyReports'][0]['netIncomeFromContinuingOperations']
+data_income_quarterly_last_netIncomeApplicableToCommonShares = response_data_income.json()['quarterlyReports'][0]['netIncomeApplicableToCommonShares']
+data_income_quarterly_last_preferredStockAndOtherAdjustments = response_data_income.json()['quarterlyReports'][0]['preferredStockAndOtherAdjustments']
 
 
 
@@ -205,175 +213,189 @@ data_income_quarterly_last_preferredStockAndOtherAdjustments = 0
     # https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol=IBM&apikey=demo
         # We can have data be <annual> or <quarterly> 
         # date is denaoted by "fiscalDateEnding"
-    # DEMO DATA
+
+base_url = 'https://www.alphavantage.co/query?'
+params = {'function': 'BALANCE_SHEET',
+		 'symbol': stock_ticker,
+		 'apikey': keys}
+response_data_balance = requests.get(base_url, params=params)
+
+
 
     # LAST ANNUAL BALANCE SHEET DATA
-data_balance_annual_last_fiscalDateEnding = 0
-data_balance_annual_last_reportedCurrency = 0
-data_balance_annual_last_totalAssets = 0
-data_balance_annual_last_intangibleAssets = 0
-data_balance_annual_last_earningAssets = 0
-data_balance_annual_last_otherCurrentAssets = 0
-data_balance_annual_last_totalLiabilities = 0
-data_balance_annual_last_totalShareholderEquity = 0
-data_balance_annual_last_deferredLongTermLiabilities = 0
-data_balance_annual_last_otherCurrentLiabilities = 0
-data_balance_annual_last_commonStock = 0
-data_balance_annual_last_retainedEarnings = 0
-data_balance_annual_last_otherLiabilities = 0
-data_balance_annual_last_goodwill = 0
-data_balance_annual_last_otherAssets = 0
-data_balance_annual_last_cash = 0
-data_balance_annual_last_totalCurrentLiabilities = 0
-data_balance_annual_last_shortTermDebt = 0
-data_balance_annual_last_currentLongTermDebt = 0
-data_balance_annual_last_otherShareholderEquity = 0
-data_balance_annual_last_propertyPlantEquipment = 0
-data_balance_annual_last_totalCurrentAssets = 0
-data_balance_annual_last_longTermInvestments = 0
-data_balance_annual_last_netTangibleAssets = 0
-data_balance_annual_last_shortTermInvestments = 0
-data_balance_annual_last_netReceivables = 0
-data_balance_annual_last_longTermDebt = 0
-data_balance_annual_last_inventory = 0
-data_balance_annual_last_accountsPayable = 0
-data_balance_annual_last_totalPermanentEquity = 0
-data_balance_annual_last_additionalPaidInCapital = 0
-data_balance_annual_last_commonStockTotalEquity = 0
-data_balance_annual_last_preferredStockTotalEquity = 0
-data_balance_annual_last_retainedEarningsTotalEquity = 0
-data_balance_annual_last_treasuryStock = 0
-data_balance_annual_last_accumulatedAmortization = 0
-data_balance_annual_last_otherNonCurrrentAssets = 0
-data_balance_annual_last_deferredLongTermAssetCharges = 0
-data_balance_annual_last_totalNonCurrentAssets = 0
-data_balance_annual_last_capitalLeaseObligations = 0
-data_balance_annual_last_totalLongTermDebt = 0
-data_balance_annual_last_otherNonCurrentLiabilities = 0
-data_balance_annual_last_totalNonCurrentLiabilities = 0
-data_balance_annual_last_negativeGoodwill = 0
-data_balance_annual_last_warrants = 0
-data_balance_annual_last_preferredStockRedeemable = 0
-data_balance_annual_last_capitalSurplus = 0
-data_balance_annual_last_liabilitiesAndShareholderEquity = 0
-data_balance_annual_last_cashAndShortTermInvestments = 0
-data_balance_annual_last_accumulatedDepreciation = 0
-data_balance_annual_last_commonStockSharesOutstanding = 0
+data_balance_annual_last_fiscalDateEnding = response_data_balance.json()['annualReports'][0]['fiscalDateEnding']
+data_balance_annual_last_reportedCurrency = response_data_balance.json()['annualReports'][0]['reportedCurrency']
+data_balance_annual_last_totalAssets = response_data_balance.json()['annualReports'][0]['totalAssets']
+data_balance_annual_last_intangibleAssets = response_data_balance.json()['annualReports'][0]['intangibleAssets']
+data_balance_annual_last_earningAssets = response_data_balance.json()['annualReports'][0]['earningAssets']
+data_balance_annual_last_otherCurrentAssets = response_data_balance.json()['annualReports'][0]['otherCurrentAssets']
+data_balance_annual_last_totalLiabilities = response_data_balance.json()['annualReports'][0]['totalLiabilities']
+data_balance_annual_last_totalShareholderEquity = response_data_balance.json()['annualReports'][0]['totalShareholderEquity']
+data_balance_annual_last_deferredLongTermLiabilities = response_data_balance.json()['annualReports'][0]['deferredLongTermLiabilities']
+data_balance_annual_last_otherCurrentLiabilities = response_data_balance.json()['annualReports'][0]['otherCurrentLiabilities']
+data_balance_annual_last_commonStock = response_data_balance.json()['annualReports'][0]['commonStock']
+data_balance_annual_last_retainedEarnings = response_data_balance.json()['annualReports'][0]['retainedEarnings']
+data_balance_annual_last_otherLiabilities = response_data_balance.json()['annualReports'][0]['otherLiabilities']
+data_balance_annual_last_goodwill = response_data_balance.json()['annualReports'][0]['goodwill']
+data_balance_annual_last_otherAssets = response_data_balance.json()['annualReports'][0]['otherAssets']
+data_balance_annual_last_cash = response_data_balance.json()['annualReports'][0]['cash']
+data_balance_annual_last_totalCurrentLiabilities = response_data_balance.json()['annualReports'][0]['totalCurrentLiabilities']
+data_balance_annual_last_shortTermDebt = response_data_balance.json()['annualReports'][0]['shortTermDebt']
+data_balance_annual_last_currentLongTermDebt = response_data_balance.json()['annualReports'][0]['currentLongTermDebt']
+data_balance_annual_last_otherShareholderEquity = response_data_balance.json()['annualReports'][0]['otherShareholderEquity']
+data_balance_annual_last_propertyPlantEquipment = response_data_balance.json()['annualReports'][0]['propertyPlantEquipment']
+data_balance_annual_last_totalCurrentAssets = response_data_balance.json()['annualReports'][0]['totalCurrentAssets']
+data_balance_annual_last_longTermInvestments = response_data_balance.json()['annualReports'][0]['longTermInvestments']
+data_balance_annual_last_netTangibleAssets = response_data_balance.json()['annualReports'][0]['netTangibleAssets']
+data_balance_annual_last_shortTermInvestments = response_data_balance.json()['annualReports'][0]['shortTermInvestments']
+data_balance_annual_last_netReceivables = response_data_balance.json()['annualReports'][0]['netReceivables']
+data_balance_annual_last_longTermDebt = response_data_balance.json()['annualReports'][0]['longTermDebt']
+data_balance_annual_last_inventory = response_data_balance.json()['annualReports'][0]['inventory']
+data_balance_annual_last_accountsPayable = response_data_balance.json()['annualReports'][0]['accountsPayable']
+data_balance_annual_last_totalPermanentEquity = response_data_balance.json()['annualReports'][0]['totalPermanentEquity']
+data_balance_annual_last_additionalPaidInCapital = response_data_balance.json()['annualReports'][0]['additionalPaidInCapital']
+data_balance_annual_last_commonStockTotalEquity = response_data_balance.json()['annualReports'][0]['commonStockTotalEquity']
+data_balance_annual_last_preferredStockTotalEquity = response_data_balance.json()['annualReports'][0]['preferredStockTotalEquity']
+data_balance_annual_last_retainedEarningsTotalEquity = response_data_balance.json()['annualReports'][0]['retainedEarningsTotalEquity']
+data_balance_annual_last_treasuryStock = response_data_balance.json()['annualReports'][0]['treasuryStock']
+data_balance_annual_last_accumulatedAmortization = response_data_balance.json()['annualReports'][0]['accumulatedAmortization']
+data_balance_annual_last_otherNonCurrrentAssets = response_data_balance.json()['annualReports'][0]['otherNonCurrrentAssets']
+data_balance_annual_last_deferredLongTermAssetCharges = response_data_balance.json()['annualReports'][0]['deferredLongTermAssetCharges']
+data_balance_annual_last_totalNonCurrentAssets = response_data_balance.json()['annualReports'][0]['totalNonCurrentAssets']
+data_balance_annual_last_capitalLeaseObligations = response_data_balance.json()['annualReports'][0]['capitalLeaseObligations']
+data_balance_annual_last_totalLongTermDebt = response_data_balance.json()['annualReports'][0]['totalLongTermDebt']
+data_balance_annual_last_otherNonCurrentLiabilities = response_data_balance.json()['annualReports'][0]['otherNonCurrentLiabilities']
+data_balance_annual_last_totalNonCurrentLiabilities = response_data_balance.json()['annualReports'][0]['totalNonCurrentLiabilities']
+data_balance_annual_last_negativeGoodwill = response_data_balance.json()['annualReports'][0]['negativeGoodwill']
+data_balance_annual_last_warrants = response_data_balance.json()['annualReports'][0]['warrants']
+data_balance_annual_last_preferredStockRedeemable = response_data_balance.json()['annualReports'][0]['preferredStockRedeemable']
+data_balance_annual_last_capitalSurplus = response_data_balance.json()['annualReports'][0]['capitalSurplus']
+data_balance_annual_last_liabilitiesAndShareholderEquity = response_data_balance.json()['annualReports'][0]['liabilitiesAndShareholderEquity']
+data_balance_annual_last_cashAndShortTermInvestments = response_data_balance.json()['annualReports'][0]['cashAndShortTermInvestments']
+data_balance_annual_last_accumulatedDepreciation = response_data_balance.json()['annualReports'][0]['accumulatedDepreciation']
+data_balance_annual_last_commonStockSharesOutstanding = response_data_balance.json()['annualReports'][0]['commonStockSharesOutstanding']
+
+
 
     # LAST QUARTERLY BALANCE SHEET DATA
-data_balance_quarterly_last_fiscalDateEnding = 0
-data_balance_quarterly_last_reportedCurrency = 0
-data_balance_quarterly_last_totalAssets = 0
-data_balance_quarterly_last_intangibleAssets = 0
-data_balance_quarterly_last_earningAssets = 0
-data_balance_quarterly_last_otherCurrentAssets = 0
-data_balance_quarterly_last_totalLiabilities = 0
-data_balance_quarterly_last_totalShareholderEquity = 0
-data_balance_quarterly_last_deferredLongTermLiabilities = 0
-data_balance_quarterly_last_otherCurrentLiabilities = 0
-data_balance_quarterly_last_commonStock = 0
-data_balance_quarterly_last_retainedEarnings = 0
-data_balance_quarterly_last_otherLiabilities = 0
-data_balance_quarterly_last_goodwill = 0
-data_balance_quarterly_last_otherAssets = 0
-data_balance_quarterly_last_cash = 0
-data_balance_quarterly_last_totalCurrentLiabilities = 0
-data_balance_quarterly_last_shortTermDebt = 0
-data_balance_quarterly_last_currentLongTermDebt = 0
-data_balance_quarterly_last_otherShareholderEquity = 0
-data_balance_quarterly_last_propertyPlantEquipment = 0
-data_balance_quarterly_last_totalCurrentAssets = 0
-data_balance_quarterly_last_longTermInvestments = 0
-data_balance_quarterly_last_netTangibleAssets = 0
-data_balance_quarterly_last_shortTermInvestments = 0
-data_balance_quarterly_last_netReceivables = 0
-data_balance_quarterly_last_longTermDebt = 0
-data_balance_quarterly_last_inventory = 0
-data_balance_quarterly_last_accountsPayable = 0
-data_balance_quarterly_last_totalPermanentEquity = 0
-data_balance_quarterly_last_additionalPaidInCapital = 0
-data_balance_quarterly_last_commonStockTotalEquity = 0
-data_balance_quarterly_last_preferredStockTotalEquity = 0
-data_balance_quarterly_last_retainedEarningsTotalEquity = 0
-data_balance_quarterly_last_treasuryStock = 0
-data_balance_quarterly_last_accumulatedAmortization = 0
-data_balance_quarterly_last_otherNonCurrrentAssets = 0
-data_balance_quarterly_last_deferredLongTermAssetCharges = 0
-data_balance_quarterly_last_totalNonCurrentAssets = 0
-data_balance_quarterly_last_capitalLeaseObligations = 0
-data_balance_quarterly_last_totalLongTermDebt = 0
-data_balance_quarterly_last_otherNonCurrentLiabilities = 0
-data_balance_quarterly_last_totalNonCurrentLiabilities = 0
-data_balance_quarterly_last_negativeGoodwill = 0
-data_balance_quarterly_last_warrants = 0
-data_balance_quarterly_last_preferredStockRedeemable = 0
-data_balance_quarterly_last_capitalSurplus = 0
-data_balance_quarterly_last_liabilitiesAndShareholderEquity = 0
-data_balance_quarterly_last_cashAndShortTermInvestments = 0
-data_balance_quarterly_last_accumulatedDepreciation = 0
-data_balance_quarterly_last_commonStockSharesOutstanding = 0
+data_balance_quarterly_last_fiscalDateEnding = response_data_balance.json()['quarterlyReports'][0]['fiscalDateEnding']
+data_balance_quarterly_last_reportedCurrency = response_data_balance.json()['quarterlyReports'][0]['reportedCurrency']
+data_balance_quarterly_last_totalAssets = response_data_balance.json()['quarterlyReports'][0]['totalAssets']
+data_balance_quarterly_last_intangibleAssets = response_data_balance.json()['quarterlyReports'][0]['intangibleAssets']
+data_balance_quarterly_last_earningAssets = response_data_balance.json()['quarterlyReports'][0]['earningAssets']
+data_balance_quarterly_last_otherCurrentAssets = response_data_balance.json()['quarterlyReports'][0]['otherCurrentAssets']
+data_balance_quarterly_last_totalLiabilities = response_data_balance.json()['quarterlyReports'][0]['totalLiabilities']
+data_balance_quarterly_last_totalShareholderEquity = response_data_balance.json()['quarterlyReports'][0]['totalShareholderEquity']
+data_balance_quarterly_last_deferredLongTermLiabilities = response_data_balance.json()['quarterlyReports'][0]['deferredLongTermLiabilities']
+data_balance_quarterly_last_otherCurrentLiabilities = response_data_balance.json()['quarterlyReports'][0]['otherCurrentLiabilities']
+data_balance_quarterly_last_commonStock = response_data_balance.json()['quarterlyReports'][0]['commonStock']
+data_balance_quarterly_last_retainedEarnings = response_data_balance.json()['quarterlyReports'][0]['retainedEarnings']
+data_balance_quarterly_last_otherLiabilities = response_data_balance.json()['quarterlyReports'][0]['otherLiabilities']
+data_balance_quarterly_last_goodwill = response_data_balance.json()['quarterlyReports'][0]['goodwill']
+data_balance_quarterly_last_otherAssets = response_data_balance.json()['quarterlyReports'][0]['otherAssets']
+data_balance_quarterly_last_cash = response_data_balance.json()['quarterlyReports'][0]['cash']
+data_balance_quarterly_last_totalCurrentLiabilities = response_data_balance.json()['quarterlyReports'][0]['totalCurrentLiabilities']
+data_balance_quarterly_last_shortTermDebt = response_data_balance.json()['quarterlyReports'][0]['shortTermDebt']
+data_balance_quarterly_last_currentLongTermDebt = response_data_balance.json()['quarterlyReports'][0]['currentLongTermDebt']
+data_balance_quarterly_last_otherShareholderEquity = response_data_balance.json()['quarterlyReports'][0]['otherShareholderEquity']
+data_balance_quarterly_last_propertyPlantEquipment = response_data_balance.json()['quarterlyReports'][0]['propertyPlantEquipment']
+data_balance_quarterly_last_totalCurrentAssets = response_data_balance.json()['quarterlyReports'][0]['totalCurrentAssets']
+data_balance_quarterly_last_longTermInvestments = response_data_balance.json()['quarterlyReports'][0]['longTermInvestments']
+data_balance_quarterly_last_netTangibleAssets = response_data_balance.json()['quarterlyReports'][0]['netTangibleAssets']
+data_balance_quarterly_last_shortTermInvestments = response_data_balance.json()['quarterlyReports'][0]['shortTermInvestments']
+data_balance_quarterly_last_netReceivables = response_data_balance.json()['quarterlyReports'][0]['netReceivables']
+data_balance_quarterly_last_longTermDebt = response_data_balance.json()['quarterlyReports'][0]['longTermDebt']
+data_balance_quarterly_last_inventory = response_data_balance.json()['quarterlyReports'][0]['inventory']
+data_balance_quarterly_last_accountsPayable = response_data_balance.json()['quarterlyReports'][0]['accountsPayable']
+data_balance_quarterly_last_totalPermanentEquity = response_data_balance.json()['quarterlyReports'][0]['totalPermanentEquity']
+data_balance_quarterly_last_additionalPaidInCapital = response_data_balance.json()['quarterlyReports'][0]['additionalPaidInCapital']
+data_balance_quarterly_last_commonStockTotalEquity = response_data_balance.json()['quarterlyReports'][0]['commonStockTotalEquity']
+data_balance_quarterly_last_preferredStockTotalEquity = response_data_balance.json()['quarterlyReports'][0]['preferredStockTotalEquity']
+data_balance_quarterly_last_retainedEarningsTotalEquity = response_data_balance.json()['quarterlyReports'][0]['retainedEarningsTotalEquity']
+data_balance_quarterly_last_treasuryStock = response_data_balance.json()['quarterlyReports'][0]['treasuryStock']
+data_balance_quarterly_last_accumulatedAmortization = response_data_balance.json()['quarterlyReports'][0]['accumulatedAmortization']
+data_balance_quarterly_last_otherNonCurrrentAssets = response_data_balance.json()['quarterlyReports'][0]['otherNonCurrrentAssets']
+data_balance_quarterly_last_deferredLongTermAssetCharges = response_data_balance.json()['quarterlyReports'][0]['deferredLongTermAssetCharges']
+data_balance_quarterly_last_totalNonCurrentAssets = response_data_balance.json()['quarterlyReports'][0]['totalNonCurrentAssets']
+data_balance_quarterly_last_capitalLeaseObligations = response_data_balance.json()['quarterlyReports'][0]['capitalLeaseObligations']
+data_balance_quarterly_last_totalLongTermDebt = response_data_balance.json()['quarterlyReports'][0]['totalLongTermDebt']
+data_balance_quarterly_last_otherNonCurrentLiabilities = response_data_balance.json()['quarterlyReports'][0]['otherNonCurrentLiabilities']
+data_balance_quarterly_last_totalNonCurrentLiabilities = response_data_balance.json()['quarterlyReports'][0]['totalNonCurrentLiabilities']
+data_balance_quarterly_last_negativeGoodwill = response_data_balance.json()['quarterlyReports'][0]['negativeGoodwill']
+data_balance_quarterly_last_warrants = response_data_balance.json()['quarterlyReports'][0]['warrants']
+data_balance_quarterly_last_preferredStockRedeemable = response_data_balance.json()['quarterlyReports'][0]['preferredStockRedeemable']
+data_balance_quarterly_last_capitalSurplus = response_data_balance.json()['quarterlyReports'][0]['capitalSurplus']
+data_balance_quarterly_last_liabilitiesAndShareholderEquity = response_data_balance.json()['quarterlyReports'][0]['liabilitiesAndShareholderEquity']
+data_balance_quarterly_last_cashAndShortTermInvestments = response_data_balance.json()['quarterlyReports'][0]['cashAndShortTermInvestments']
+data_balance_quarterly_last_accumulatedDepreciation = response_data_balance.json()['quarterlyReports'][0]['accumulatedDepreciation']
+data_balance_quarterly_last_commonStockSharesOutstanding = response_data_balance.json()['quarterlyReports'][0]['commonStockSharesOutstanding']
+
+
 
     ### FUNDAMENTAL DATA > CASH FLOW ###
     # https://www.alphavantage.co/query?function=CASH_FLOW&symbol=IBM&apikey=demo
         # We can have data be <annual> or <quarterly> 
         # date is denaoted by "fiscalDateEnding"
-    # DEMO DATA
+
+
+base_url = 'https://www.alphavantage.co/query?'
+params = {'function': 'CASH_FLOW',
+		 'symbol': stock_ticker,
+		 'apikey': keys}
+response_data_cashflow = requests.get(base_url, params=params)
+
+
 
     # LAST ANNUAL CASH FLOW DATA
-data_cashflow_annual_last_fiscalDateEnding = 0
-data_cashflow_annual_last_reportedCurrency = 0
-data_cashflow_annual_last_investments = 0
-data_cashflow_annual_last_changeInLiabilities = 0
-data_cashflow_annual_last_cashflowFromInvestment = 0
-data_cashflow_annual_last_otherCashflowFromInvestment = 0
-data_cashflow_annual_last_netBorrowings = 0
-data_cashflow_annual_last_cashflowFromFinancing = 0
-data_cashflow_annual_last_otherCashflowFromFinancing = 0
-data_cashflow_annual_last_changeInOperatingActivities = 0
-data_cashflow_annual_last_netIncome = 0
-data_cashflow_annual_last_changeInCash = 0
-data_cashflow_annual_last_operatingCashflow = 0
-data_cashflow_annual_last_otherOperatingCashflow = 0
-data_cashflow_annual_last_depreciation = 0
-data_cashflow_annual_last_dividendPayout = 0
-data_cashflow_annual_last_stockSaleAndPurchase = 0
-data_cashflow_annual_last_changeInInventory = 0
-data_cashflow_annual_last_changeInAccountReceivables = 0
-data_cashflow_annual_last_changeInNetIncome = 0
-data_cashflow_annual_last_capitalExpenditures = 0
-data_cashflow_annual_last_changeInReceivables = 0
-data_cashflow_annual_last_changeInExchangeRate = 0
-data_cashflow_annual_last_changeInCashAndCashEquivalents = 0
+data_cashflow_annual_last_fiscalDateEnding = response_data_cashflow.json()['annualReports'][0]['fiscalDateEnding']
+data_cashflow_annual_last_reportedCurrency = response_data_cashflow.json()['annualReports'][0]['reportedCurrency']
+data_cashflow_annual_last_investments = response_data_cashflow.json()['annualReports'][0]['investments']
+data_cashflow_annual_last_changeInLiabilities = response_data_cashflow.json()['annualReports'][0]['changeInLiabilities']
+data_cashflow_annual_last_cashflowFromInvestment = response_data_cashflow.json()['annualReports'][0]['cashflowFromInvestment']
+data_cashflow_annual_last_otherCashflowFromInvestment = response_data_cashflow.json()['annualReports'][0]['otherCashflowFromInvestment']
+data_cashflow_annual_last_netBorrowings = response_data_cashflow.json()['annualReports'][0]['netBorrowings']
+data_cashflow_annual_last_cashflowFromFinancing = response_data_cashflow.json()['annualReports'][0]['cashflowFromFinancing']
+data_cashflow_annual_last_otherCashflowFromFinancing = response_data_cashflow.json()['annualReports'][0]['otherCashflowFromFinancing']
+data_cashflow_annual_last_changeInOperatingActivities = response_data_cashflow.json()['annualReports'][0]['changeInOperatingActivities']
+data_cashflow_annual_last_netIncome = response_data_cashflow.json()['annualReports'][0]['netIncome']
+data_cashflow_annual_last_changeInCash = response_data_cashflow.json()['annualReports'][0]['changeInCash']
+data_cashflow_annual_last_operatingCashflow = response_data_cashflow.json()['annualReports'][0]['operatingCashflow']
+data_cashflow_annual_last_otherOperatingCashflow = response_data_cashflow.json()['annualReports'][0]['otherOperatingCashflow']
+data_cashflow_annual_last_depreciation = response_data_cashflow.json()['annualReports'][0]['depreciation']
+data_cashflow_annual_last_dividendPayout = response_data_cashflow.json()['annualReports'][0]['dividendPayout']
+data_cashflow_annual_last_stockSaleAndPurchase = response_data_cashflow.json()['annualReports'][0]['stockSaleAndPurchase']
+data_cashflow_annual_last_changeInInventory = response_data_cashflow.json()['annualReports'][0]['changeInInventory']
+data_cashflow_annual_last_changeInAccountReceivables = response_data_cashflow.json()['annualReports'][0]['changeInAccountReceivables']
+data_cashflow_annual_last_changeInNetIncome = response_data_cashflow.json()['annualReports'][0]['changeInNetIncome']
+data_cashflow_annual_last_capitalExpenditures = response_data_cashflow.json()['annualReports'][0]['capitalExpenditures']
+data_cashflow_annual_last_changeInReceivables = response_data_cashflow.json()['annualReports'][0]['changeInReceivables']
+data_cashflow_annual_last_changeInExchangeRate = response_data_cashflow.json()['annualReports'][0]['changeInExchangeRate']
+data_cashflow_annual_last_changeInCashAndCashEquivalents = response_data_cashflow.json()['annualReports'][0]['changeInCashAndCashEquivalents']
+
+
 
     # LAST QUARTERLY CASH FLOW DATA
-data_cashflow_quarterly_last_fiscalDateEnding = 0
-data_cashflow_quarterly_last_reportedCurrency = 0
-data_cashflow_quarterly_last_investments = 0
-data_cashflow_quarterly_last_changeInLiabilities = 0
-data_cashflow_quarterly_last_cashflowFromInvestment = 0
-data_cashflow_quarterly_last_otherCashflowFromInvestment = 0
-data_cashflow_quarterly_last_netBorrowings = 0
-data_cashflow_quarterly_last_cashflowFromFinancing = 0
-data_cashflow_quarterly_last_otherCashflowFromFinancing = 0
-data_cashflow_quarterly_last_changeInOperatingActivities = 0
-data_cashflow_quarterly_last_netIncome = 0
-data_cashflow_quarterly_last_changeInCash = 0
-data_cashflow_quarterly_last_operatingCashflow = 0
-data_cashflow_quarterly_last_otherOperatingCashflow = 0
-data_cashflow_quarterly_last_depreciation = 0
-data_cashflow_quarterly_last_dividendPayout = 0
-data_cashflow_quarterly_last_stockSaleAndPurchase = 0
-data_cashflow_quarterly_last_changeInInventory = 0
-data_cashflow_quarterly_last_changeInAccountReceivables = 0
-data_cashflow_quarterly_last_changeInNetIncome = 0
-data_cashflow_quarterly_last_capitalExpenditures = 0
-data_cashflow_quarterly_last_changeInReceivables = 0
-data_cashflow_quarterly_last_changeInExchangeRate = 0
-data_cashflow_quarterly_last_changeInCashAndCashEquivalents = 0
-
-
-
-
-
-
-
+data_cashflow_quarterly_last_fiscalDateEnding = response_data_cashflow.json()['quarterlyReports'][0]['fiscalDateEnding']
+data_cashflow_quarterly_last_reportedCurrency = response_data_cashflow.json()['quarterlyReports'][0]['reportedCurrency']
+data_cashflow_quarterly_last_investments = response_data_cashflow.json()['quarterlyReports'][0]['investments']
+data_cashflow_quarterly_last_changeInLiabilities = response_data_cashflow.json()['quarterlyReports'][0]['changeInLiabilities']
+data_cashflow_quarterly_last_cashflowFromInvestment = response_data_cashflow.json()['quarterlyReports'][0]['cashflowFromInvestment']
+data_cashflow_quarterly_last_otherCashflowFromInvestment = response_data_cashflow.json()['quarterlyReports'][0]['otherCashflowFromInvestment']
+data_cashflow_quarterly_last_netBorrowings = response_data_cashflow.json()['quarterlyReports'][0]['netBorrowings']
+data_cashflow_quarterly_last_cashflowFromFinancing = response_data_cashflow.json()['quarterlyReports'][0]['cashflowFromFinancing']
+data_cashflow_quarterly_last_otherCashflowFromFinancing = response_data_cashflow.json()['quarterlyReports'][0]['otherCashflowFromFinancing']
+data_cashflow_quarterly_last_changeInOperatingActivities = response_data_cashflow.json()['quarterlyReports'][0]['changeInOperatingActivities']
+data_cashflow_quarterly_last_netIncome = response_data_cashflow.json()['quarterlyReports'][0]['netIncome']
+data_cashflow_quarterly_last_changeInCash = response_data_cashflow.json()['quarterlyReports'][0]['changeInCash']
+data_cashflow_quarterly_last_operatingCashflow = response_data_cashflow.json()['quarterlyReports'][0]['operatingCashflow']
+data_cashflow_quarterly_last_otherOperatingCashflow = response_data_cashflow.json()['quarterlyReports'][0]['otherOperatingCashflow']
+data_cashflow_quarterly_last_depreciation = response_data_cashflow.json()['quarterlyReports'][0]['depreciation']
+data_cashflow_quarterly_last_dividendPayout = response_data_cashflow.json()['quarterlyReports'][0]['dividendPayout']
+data_cashflow_quarterly_last_stockSaleAndPurchase = response_data_cashflow.json()['quarterlyReports'][0]['stockSaleAndPurchase']
+data_cashflow_quarterly_last_changeInInventory = response_data_cashflow.json()['quarterlyReports'][0]['changeInInventory']
+data_cashflow_quarterly_last_changeInAccountReceivables = response_data_cashflow.json()['quarterlyReports'][0]['changeInAccountReceivables']
+data_cashflow_quarterly_last_changeInNetIncome = response_data_cashflow.json()['quarterlyReports'][0]['changeInNetIncome']
+data_cashflow_quarterly_last_capitalExpenditures = response_data_cashflow.json()['quarterlyReports'][0]['capitalExpenditures']
+data_cashflow_quarterly_last_changeInReceivables = response_data_cashflow.json()['quarterlyReports'][0]['changeInReceivables']
+data_cashflow_quarterly_last_changeInExchangeRate = response_data_cashflow.json()['quarterlyReports'][0]['changeInExchangeRate']
+data_cashflow_quarterly_last_changeInCashAndCashEquivalents = response_data_cashflow.json()['quarterlyReports'][0]['changeInCashAndCashEquivalents']
