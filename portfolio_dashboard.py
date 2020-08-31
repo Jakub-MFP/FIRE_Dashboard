@@ -15,10 +15,10 @@ option()
 while True:
     new_item = input("PICK OPTION >  ")
 
-    if new_item == 'STOCK':
+    if new_item == 'STOCK'.lower():
         import stock_screener
     
-    elif new_item == 'NO':
+    elif new_item == 'NO'.lower():
         break
     break
 

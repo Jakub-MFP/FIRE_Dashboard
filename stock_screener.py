@@ -60,42 +60,42 @@ main_intro()
 while True: #main loop
     new_item = input("PICK OPTION > ")
 
-    if new_item == 'INPUT':
+    if new_item == 'INPUT'.lower():
         user_help()
 
         while True:
             new_item = input("Add stock ticker > ") #ask user to input stock
 
-            if new_item == 'DONE':
+            if new_item == 'DONE'.lower():
                 break
 
-            elif new_item == 'HELP':
+            elif new_item == 'HELP'.lower():
                 user_help()
                 continue 
 
-            elif new_item == 'SHOW':
+            elif new_item == 'SHOW'.lower():
                 show_list()
                 continue
 
-            elif new_item == 'INPUT':
+            elif new_item == 'INPUT'.lower():
                 print("ERROR: You are already in INPUT ")
                 print("Enter 'HELP' for more options or add a stock ticker.")
                 continue
 
-            elif new_item == 'DEL': # Removing items from stock list
+            elif new_item == 'DEL'.lower(): # Removing items from stock list
                 del_item_intro()
 
                 while True:
                     new_item = input("Remove stock ticker > ")
 
-                    if new_item == 'DONE':
+                    if new_item == 'DONE'.lower():
                        break 
 
-                    elif new_item == 'HELP':
+                    elif new_item == 'HELP'.lower():
                         user_help()
                         continue 
 
-                    elif new_item == 'SHOW':
+                    elif new_item == 'SHOW'.lower():
                         show_list() 
                         continue
 
@@ -107,11 +107,11 @@ while True: #main loop
         break   
     
 
-    elif new_item == 'FILE':
+    elif new_item == 'FILE'.lower():
         print("Select your CSV File")
         break
 
-    elif new_item == 'DEFAULT':
+    elif new_item == 'DEFAULT'.lower():
         stock_list=default_list
         break
 
