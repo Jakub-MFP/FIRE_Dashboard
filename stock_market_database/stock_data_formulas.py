@@ -17,8 +17,8 @@ import datetime as dt
 import requests
 import os
 import json
-from quick_stock_analysis import stock_ticker
 
+stock_ticker="TSLA"
 
 
 ### IMPORTS KEY FROM KEYS FILE ###
@@ -49,7 +49,7 @@ data_overview_Alpha = "need to make forumla"
 
     ### STOCK TIME SERIES > DAILY ADJUSTED ###
         # Date / Open / High / Low / Close / Adjusted Close / Volume / Dividend / Split
-data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='compact')
+data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='compact', interval=60)
         # data_daily['column name'][row number]
 data_daily_lastOpenPrice = data_daily['1. open'][0]
 data_daily_lastHighPrice = data_daily['2. high'][0]
@@ -399,3 +399,15 @@ data_cashflow_quarterly_last_capitalExpenditures = response_data_cashflow.json()
 data_cashflow_quarterly_last_changeInReceivables = response_data_cashflow.json()['quarterlyReports'][0]['changeInReceivables']
 data_cashflow_quarterly_last_changeInExchangeRate = response_data_cashflow.json()['quarterlyReports'][0]['changeInExchangeRate']
 data_cashflow_quarterly_last_changeInCashAndCashEquivalents = response_data_cashflow.json()['quarterlyReports'][0]['changeInCashAndCashEquivalents']
+
+
+
+### CUSTOM FORMULAS ###
+    #using price to sales ratio of 4x
+data_custom_current_expectedValue = float(data_overview_RevenueTTM) * 4
+
+
+
+
+print(data_custom_current_expectedValue)
+
