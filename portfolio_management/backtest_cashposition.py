@@ -27,7 +27,7 @@ createTable_report = """
             cash_req INT,
             current_cash_equity INT,
             stock_price_open INT,
-        >>> stock_purchase_value INT,
+            stock_purchase_value INT,
             stock_price_close INT,
             stock_position INT,
             stock_value INT,
