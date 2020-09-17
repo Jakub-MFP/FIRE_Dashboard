@@ -8,10 +8,16 @@ import datetime
 from datetime import datetime as dt
 from alpha_vantage.timeseries import TimeSeries
 
+
+###########################################################################
+
+
 ### CONNECT TO SQLITE DATABASE ###
 conn = sqlite3.connect('backtest.db')
 c = conn.cursor()
 
+
+###########################################################################
 
 
 ### CREATE DATABASE TABLES ###
@@ -42,6 +48,8 @@ createTable_report = """
 c.execute(createTable_report)
 
 
+###########################################################################
+
 
 ### ALPHA VANTAGE API ###
     # https://www.alphavantage.co/documentation/
@@ -58,3 +66,6 @@ data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='
 stock_price_open = data_daily['1. open'][0]
 stock_price_close = data_daily['5. adjusted close'][0]
 dividend_amount = data_daily['7. dividend amount'][0]
+
+
+###########################################################################
