@@ -41,3 +41,20 @@ createTable_report = """
 """
 c.execute(createTable_report)
 
+
+
+### ALPHA VANTAGE API ###
+    # https://www.alphavantage.co/documentation/
+stock_ticker = 'SPY'
+api_key = 'OKEQLECOMW6HJ7R0'
+
+    # daily stock price using pandas data frame
+ts = TimeSeries (key=api_key, output_format = "pandas")
+
+    # Date / Open / High / Low / Close / Adjusted Close / Volume / Dividend / Split
+data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
+    
+    # data_daily['column name'][row number]
+stock_price_open = data_daily['1. open'][0]
+stock_price_close = data_daily['5. adjusted close'][0]
+dividend_amount = data_daily['7. dividend amount'][0]
