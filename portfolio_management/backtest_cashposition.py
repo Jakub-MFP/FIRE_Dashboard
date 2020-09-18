@@ -75,7 +75,59 @@ dividend_amount = data_daily['7. dividend amount'][0]
 
 current_market = 0 #if the market is down or up how much
 cash_req = 0 # how much cash do we need to keep on hand
+starting_cash_options = [0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
 
+for i in starting_cash_options:
+    starting_cash_req = i
+
+    while True:
+        if starting_cash_req == 0.50:
+            while True:
+                
+
+                
+
+        elif starting_cash_req == 0.45:
+
+            continue
+
+        elif starting_cash_req == 0.40:
+
+            continue
+
+        elif starting_cash_req == 0.35:
+
+            continue
+
+        elif starting_cash_req == 0.30:
+
+            continue
+
+        elif starting_cash_req == 0.25:
+
+            continue
+
+        elif starting_cash_req == 0.20:
+
+            continue
+
+        elif starting_cash_req == 0.15:
+
+            continue
+
+        elif starting_cash_req == 0.10:
+
+            continue
+
+        elif starting_cash_req == 0.05:
+
+            continue
+    break
+
+
+        # Current Market is 0 or higher than loop trough cash options
+            #cash_options
+        
         # If current_market greater than  0%+ 
             # Than investment_req  = 30%
 
@@ -105,9 +157,9 @@ cash_req = 0 # how much cash do we need to keep on hand
 
     ###########################################################################
     ### STARTING DATES ########################################################
-    start_year= 2000
-    start_month= 1
-    start_day= 1
+    start_year = 2000
+    start_month = 1
+    start_day = 1
 
     start=dt.datetime(start_year, start_month, start_day)
 
