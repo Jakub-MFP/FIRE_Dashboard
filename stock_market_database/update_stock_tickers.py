@@ -17,20 +17,23 @@ conn = sqlite3.connect('stockmarket.db')
 c = conn.cursor()
 
 
-
-
 ### CREATING DATAFRAME WITH STOCK TICKERS ###
     ### OPTION 1 - IMPORTING WITH CSV ###
 def stock_csv():
-    #stock_csv_file = pd.read_csv (r'C:\Users\home\Desktop\code_projects\db\alpha_vantage_active_stocks.csv')
-    #stock_csv_file = pd.read_csv (r'C:\Users\home\Desktop\code_projects\db\alpha_vantage_active_stocks2.csv')
-    stock_csv_file = pd.read_csv (r'C:\Users\home\Desktop\code_projects\db\alpha_vantage_active_stocks3.csv')
+        # Path to CSV File
+    file_csv="alpha_vantage_active_stocks2.csv"
+        # checking if CSV exists
+    if os.path.exists(file_csv):
+        stock_csv_file = pd.read_csv (r'{}'.format(file_csv))
+    else:
+        print ("File",file_csv,"is missing" )
+        exit()
 
     df = pd.DataFrame(stock_csv_file)
     df = df.rename(columns = {"symbol":"stock_ticker", "name":"stock_name", "exchange":"stock_exchange", "ipoDate":"stock_ipoDate", "delistingDate":"stock_delistingDate", "status":"stock_status"})
 
-    stock_updateTime = date.today()
-        # append this to the dataframe 
+    now = datetime.now()
+    stock_updateTime = now.strftime('%y-%m-%d %H:%M:%S')
 
     update_table_stocks = """
         INSERT INTO stocks (stock_ticker,
@@ -42,7 +45,7 @@ def stock_csv():
                             stock_updateTime
                             )
         VALUES (?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (stock_ticker) DO UPDATE SET 
+        ON CONFLICT (stock_ticker) DO UPDATE SET
                 stock_name = EXCLUDED.stock_name,
                 stock_exchange = EXCLUDED.stock_exchange,
                 stock_ipoDate = EXCLUDED.stock_ipoDate,
@@ -53,7 +56,10 @@ def stock_csv():
 
     for i in range(len(df)):
         values = tuple(df.iloc[i])
-        c.execute(update_table_stocks, values)
+        #append stock_updateTime to values tuple
+        new_value= (*values,stock_updateTime)
+        # 6 values in df, 7 in table. missing sending stock_updateTime
+        c.execute(update_table_stocks, new_value)
         conn.commit()
 
 
