@@ -10,6 +10,7 @@ import json
 import requests
 from datetime import datetime 
 from datetime import date
+from io import StringIO
 
 
 ### CONNECTING TO DATABASE ###
@@ -73,27 +74,33 @@ def stock_csv():
 def stock_api():
     base_url = 'https://www.alphavantage.co/query?'
     params = {'function': 'LISTING_STATUS',
-            'apikey': 'S1CBJQPC92YX01S8'}
-    response_data_overview = requests.get(base_url, params=params)
+            'apikey': '******************'}
+    response = requests.get(base_url, params=params)
     
     # create dataframe from json or something
-    
-    # append current date and time stamp to dataframe
-    stock_updateTime = date.today()
+    wrapped_data = StringIO(response.content.decode("utf-8"))
+    df = pd.read_csv(wrapped_data)
+    df = df.rename(columns = {"symbol":"stock_ticker", "name":"stock_name", "exchange":"stock_exchange", "assetType":"stock_type", "ipoDate":"stock_ipoDate", "delistingDate":"stock_delistingDate", "status":"stock_status"})
 
+    # append current date and time stamp to dataframe
+    now = datetime.now()
+    stock_updateTime = now.strftime('%y-%m-%d %H:%M:%S')
+    
     update_table_stocks = """
         INSERT INTO stocks (stock_ticker,
                             stock_name,
                             stock_exchange,
+                            stock_type,
                             stock_ipoDate,
                             stock_delistingDate,
                             stock_status,
                             stock_updateTime
                             )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (stock_ticker) DO UPDATE SET 
                 stock_name = EXCLUDED.stock_name,
                 stock_exchange = EXCLUDED.stock_exchange,
+                stock_type = EXCLUDED.stock_type,
                 stock_ipoDate = EXCLUDED.stock_ipoDate,
                 stock_delistingDate = EXCLUDED.stock_delistingDate,
                 stock_status = EXCLUDED.stock_status,
@@ -102,7 +109,10 @@ def stock_api():
 
     for i in range(len(df)):
         values = tuple(df.iloc[i])
-        c.execute(update_table_stocks, values)
+        #append stock_updateTime to values tuple
+        new_value= (*values,stock_updateTime)
+        # 6 values in df, 7 in table. missing sending stock_updateTime
+        c.execute(update_table_stocks, new_value)
         conn.commit()
 
 
@@ -110,8 +120,8 @@ def stock_api():
 
 ### UPDATING DATABASE ###
     # We can choose which option to use to update the database
-stock_csv()
-#stock_api()
+#stock_csv()
+stock_api()
 
 
 
