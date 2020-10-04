@@ -11,11 +11,12 @@ createTable_stocks = """
             stocks(
                 stock_id INTEGER PRIMARY KEY,
                 stock_ticker TEXT NOT NULL UNIQUE,
-                stock_name TEXT NOT NULL,
-                stock_exchange TEXT NOT NULL,
+                stock_name TEXT,
+                stock_exchange TEXT,
+                stock_type TEXT,
                 stock_ipoDate DATE,
                 stock_delistingDate DATE,
-                stock_status TEXT NOT NULL,
+                stock_status TEXT,
                 stock_updateTime DATE NOT NULL
             )
         """
