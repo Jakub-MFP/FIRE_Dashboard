@@ -1,0 +1,6 @@
+symbol,name,exchange,ipoDate,delistingDate,status
+AAPL,Apple Inc,test,12/12/1980,null,test222222
+MSFT,Microsoft Corp,test,3/13/1986,null,test_status
+FB,Facebook Inc,test,5/18/2012,null,test_status
+TSLA,Tesla Inc,NASDAQ,6/29/2010,null,test_status
+GOOG,Alphabet Inc Class C,NASDAQ,3/27/2014,null,test_status
