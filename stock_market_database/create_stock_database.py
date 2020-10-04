@@ -27,15 +27,15 @@ createTable_avData_daily = """
         CREATE TABLE IF NOT EXISTS 
             avData_daily(
                 daily_id INTEGER PRIMARY KEY,
-                stock_id INTEGER NOT NULL,
-                daily_date DATE NOT NULL,
-                daily_openPrice INTEGER NOT NULL,
-                daily_highPrice INTEGER NOT NULL,
-                daily_lowPrice INTEGER NOT NULL,
-                daily_adjustedClosingPrice INTEGER NOT NULL,
-                daily_tradingVolume INTEGER NOT NULL,
-                daily_lastDividendAmount INTEGER NOT NULL,
-                daily_updateTime DATE NOT NULL,
+                stock_id INTEGER,
+                daily_date DATE,
+                daily_openPrice INTEGER,
+                daily_highPrice INTEGER,
+                daily_lowPrice INTEGER,
+                daily_adjustedClosingPrice INTEGER,
+                daily_tradingVolume INTEGER,
+                daily_lastDividendAmount INTEGER,
+                daily_updateTime DATE,
                 CONSTRAINT `avData_daily` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`stock_id`)
             )
         """
