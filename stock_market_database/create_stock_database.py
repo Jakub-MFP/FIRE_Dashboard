@@ -17,10 +17,28 @@ createTable_stocks = """
                 stock_ipoDate DATE,
                 stock_delistingDate DATE,
                 stock_status TEXT,
-                stock_updateTime DATE NOT NULL
+                stock_updateTime DATE
             )
         """
 c.execute(createTable_stocks)
+
+
+# createTable_avData_daily = """
+#         CREATE TABLE IF NOT EXISTS 
+#             avData_daily(
+#                 daily_id INTEGER PRIMARY KEY,
+#                 stock_id TEXT,
+#                 daily_date TEXT,
+#                 daily_openPrice TEXT,
+#                 daily_highPrice TEXT,
+#                 daily_lowPrice TEXT,
+#                 daily_adjustedClosingPrice TEXT,
+#                 daily_tradingVolume TEXT,
+#                 daily_lastDividendAmount TEXT,
+#                 daily_updateTime DATE
+#             )
+#         """
+# c.execute(createTable_avData_daily)
 
 
 createTable_avData_daily = """
@@ -29,9 +47,6 @@ createTable_avData_daily = """
                 daily_id INTEGER PRIMARY KEY,
                 stock_id INTEGER,
                 daily_date DATE,
-                daily_openPrice INTEGER,
-                daily_highPrice INTEGER,
-                daily_lowPrice INTEGER,
                 daily_adjustedClosingPrice INTEGER,
                 daily_tradingVolume INTEGER,
                 daily_lastDividendAmount INTEGER,
