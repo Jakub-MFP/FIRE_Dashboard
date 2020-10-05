@@ -48,6 +48,7 @@ c.execute(createTable_report)
 
 ###########################################################################
 ### ALPHA VANTAGE API #####################################################
+### THIS WILL CREATE A PANDAS DATAFRAME OF ALL THE HISTORICAL PRICES ######
     # https://www.alphavantage.co/documentation/
 stock_ticker = 'SPY'
 api_key = 'OKEQLECOMW6HJ7R0'
@@ -64,191 +65,140 @@ stock_price_close = data_daily['5. adjusted close'][0]
 dividend_amount = data_daily['7. dividend amount'][0]
 
 
+    # creating pandas dataframe
+df = pd.DataFrame(data_daily)
+
+
 
 ###########################################################################
 ### CASH POSITION CONDITIONAL STATEMENTS ##################################
 ### START OF THE LOOP #####################################################
-    # Need to keep stock all time high and the diffence from it daily in database
-        # If the stock keeps going up, than there is a new recent high
-        # if the stock drops from $100 to $90 than it is a drop of 10% from ATH
-            # If stock goes to $95 , than it is -5% from ATH
+start_year = 2000
+start_month = 1
+start_day = 1
 
-current_market = 0 #if the market is down or up how much
-cash_req = 0 # how much cash do we need to keep on hand
-starting_cash_options = [0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
+start=dt.datetime(start_year, start_month, start_day)
 
-for i in starting_cash_options:
-    starting_cash_req = i
-
-    while True:
-        if starting_cash_req == 0.50:
-            while True:
-                
-
-                
-
-        elif starting_cash_req == 0.45:
-
-            continue
-
-        elif starting_cash_req == 0.40:
-
-            continue
-
-        elif starting_cash_req == 0.35:
-
-            continue
-
-        elif starting_cash_req == 0.30:
-
-            continue
-
-        elif starting_cash_req == 0.25:
-
-            continue
-
-        elif starting_cash_req == 0.20:
-
-            continue
-
-        elif starting_cash_req == 0.15:
-
-            continue
-
-        elif starting_cash_req == 0.10:
-
-            continue
-
-        elif starting_cash_req == 0.05:
-
-            continue
-    break
+current_date=dt.datetime.now()
 
 
-        # Current Market is 0 or higher than loop trough cash options
-            #cash_options
-        
-        # If current_market greater than  0%+ 
-            # Than investment_req  = 30%
+current_cash = 10000
+deposit_amount = 1000
+deposit_frequency = 5 #every 7 days
+deposit_dates = [] 
 
-        
-        # If current_market down 5%
-            # Than investment_req  = 25%
+for index, row in df.iterrows():
+    print(index)
 
 
-        # If current_market down 10% 
-            # Than investment_req  = 20%
-
-
-        # If current_market down 15% 
-            # Than investment_req  = 15%
-
-
-        # If current_market down 25% 
-            # Than investment_req  = 10%
-        
-        # If ccurrent_market down 30%+ 
-            # Than investment_req  = 5%
-        
-        # If current_market down 35%+ 
-            # Than investment_req = 0%
+# this list is of dates that a deposit will execute one 
+    # we need to create a loop that will append 7 week to the current date and generate a list of all mondays
+    # If monday is closed for trading, than we will use next avaiable trading day
+    # than it resets back to original 
+    # print out the generated deposit dates to test if this works 
 
 
 
-    ###########################################################################
-    ### STARTING DATES ########################################################
-    start_year = 2000
-    start_month = 1
-    start_day = 1
+count_trades = 0 #number of times 
+count_deposits = 0#count number of deposits
+count_cash_deposited = 0# count total value of cash that was depoisited 
+count_profit = 0 #total profit of portfolio
 
-    start=dt.datetime(start_year, start_month, start_day)
-
-    current_date=dt.datetime.now()
+current_shares_count = 0 # total number of shares owend
+current_stock_price = 0 # current stock market price
 
 
+# for i in df.index:
+     
+#     current_trading_date = 0# the next date in the loop trough the dataframe
+#     current_stock_price = 0# the next stock price in  the loop troough the dataframe
+#     current_market_all_time_high =0 # this needs to be an if statement
+#         # if current price is above market high than set new current_market_all_time_high
+#         # if its not ,t han the current one stays 
+#     current_market_change = current_stock_price - current_market_all_time_high
 
-    ###########################################################################
-    ### STARTING AMOUNTS AND DEPOSITS #########################################
-    start_amount = 10000 #starting deposit amount
-    monthly_deposit = 1000 #amount of money deposited each month
-
-    dca_weekly = monthly_deposit / 4 # how much money we deposit each week
-    dca_biweekly = monthly_deposit / 2 # how much money we deposit bi-weekly
-    dca_monthly = monthly_deposit # how much money we deposit on a monthly basis
-
-    dca_freq = dca_biweekly #how often we deposit money into portfolio, this is a setting
-
-    deposit_amount = 0 #Check if today is the day we are suppoed to deposit cash, if it is than deposit the amount based on dca_freq.
-
-
-
-    ###########################################################################
-    ### CURRENT PORTFOLIO VALUE ###############################################
-    current_shares = 17.533 #get this number from database
-    current_position_value = float(stock_price_open) * float(current_shares) #total value of SPY shares (fractional shares allowed in simulation)
-
-    cash_position = 3500 # total amount of cash that hasn't been invested
-    current_portfolio_value = float(current_position_value + cash_position)
+#     # Setting market status
+#     current_market_status = current_market_change - current_market_all_time_high
+    
+#     current_cash_required = # loop based on current marekt status
+#         if current_market_status > 0 than current_cash_required = 0.30
+#         elif current_market_status < 0  >=-5 than current_cash_required = 0.25
+#         elif current_market_status < -5  >=-10 than current_cash_required = 0.20
+#         elif current_market_status < -15  >=-15 than current_cash_required = 0.10
 
 
+#     # now that we know market status, we need see if we can deposit or not
+#     if current_trading_date == a date inside the lsit deposit_dates:
+#         current_cash =+ deposit_amount # we deposit the amoutn set into current cash
+#     elif continue 
 
-    ###########################################################################
-    ### INVESTMENT REQ ########################################################
-    cash_investment_req = float(cash_req * current_portfolio_value) # how much cash $ we need to invest in the next period
-    current_cash_equity = float(cash_position / current_portfolio_value)
-    cash_to_invest_next_day = float((current_cash_equity - cash_investment_req) * current_portfolio_value) # the amount of cash that will be spent on shares next day
+#     current_cash_equity = current_cash / current_portfolio_value
+    
+#     # now we need to figure out if we need to buy shares or not
+#     if current_cash_equity > required_cash_equity
+#         stock_purchase_cash = current_cash_equity - required_cash_equity
+#         total_shares_purchased = stock_purchase_cash / current_stock_price
+#         current_shares_count =+ total_shares_purchased
+
+#     # Now we set current portfolio value 
+#     current_portfolio_value = (current_shares_count * current_stock_price) + current_cash
+
+#     # now we add all of this data to new dataframe that will track the results for each day
+#         # save date, and all the metrics that where set bc of this 
+
+# # Now at the end print out the to tal profit, total tradess, ect 
 
 
 
-    ###########################################################################
-    ### SENDING UPDATES TO DATABASE ###########################################
-    insert_statement = """
-    INSERT INTO stocks (current_date,
-                        deposit_amount,
-                        dividend_amount,
-                        current_market,
-                        cash_req,
-                        current_cash_equity,
-                        stock_price_open,
-                        stock_purchase_value,
-                        stock_price_close,
-                        stock_position,
-                        stock_value,
-                        cash_position,
-                        portfolio_value,
-                        total_dividend,
-                        current_porit,
-                        current_roi,
-                        current_CAGR
+    # ###########################################################################
+    # ### SENDING UPDATES TO DATABASE ###########################################
+    # insert_statement = """
+    # INSERT INTO stocks (current_date,
+    #                     deposit_amount,
+    #                     dividend_amount,
+    #                     current_market,
+    #                     cash_req,
+    #                     current_cash_equity,
+    #                     stock_price_open,
+    #                     stock_purchase_value,
+    #                     stock_price_close,
+    #                     stock_position,
+    #                     stock_value,
+    #                     cash_position,
+    #                     portfolio_value,
+    #                     total_dividend,
+    #                     current_porit,
+    #                     current_roi,
+    #                     current_CAGR
                     
 
-                        )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    DO UPDATE SET 
-            current_date = current_date,
-            deposit_amount = deposit_amount,
-            dividend_amount = dividend_amount,
-            current_market = current_market,
-            current_cash_req = current_cash_req,
-            cash_equity = cash_equity,
-            stock_price_open = stock_price_open,
-            stock_purchase_value = stock_purchase_value,
-            stock_price_close = stock_price_close,
-            stock_position = stock_position,
-            stock_value = stock_value,
-            cash_position = cash_position,
-            portfolio_value = portfolio_value,
-            total_dividend = total_dividend,
-            current_profit = current_profit,
-            current_roi = current_roi,
-            current_CAGR = current_CAGR,
+    #                     )
+    # VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    # DO UPDATE SET 
+    #         current_date = current_date,
+    #         deposit_amount = deposit_amount,
+    #         dividend_amount = dividend_amount,
+    #         current_market = current_market,
+    #         current_cash_req = current_cash_req,
+    #         cash_equity = cash_equity,
+    #         stock_price_open = stock_price_open,
+    #         stock_purchase_value = stock_purchase_value,
+    #         stock_price_close = stock_price_close,
+    #         stock_position = stock_position,
+    #         stock_value = stock_value,
+    #         cash_position = cash_position,
+    #         portfolio_value = portfolio_value,
+    #         total_dividend = total_dividend,
+    #         current_profit = current_profit,
+    #         current_roi = current_roi,
+    #         current_CAGR = current_CAGR,
 
-        """
+    #     """
 
 
 
-    c.execute(insert_statement, values)
-    conn.commit()
+    # c.execute(insert_statement, values)
+    # conn.commit()
 
 
 ###########################################################################
