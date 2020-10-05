@@ -114,7 +114,7 @@ def stock_api():
         new_value= (*values,stock_updateTime)
         # 6 values in df, 7 in table. missing sending stock_updateTime
         c.execute(update_table_stocks, new_value)
-        conn.commit()
+        conn.commit() 
 
 
 
