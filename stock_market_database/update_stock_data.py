@@ -24,66 +24,84 @@ api_key = 'S1CBJQPC92YX01S8'
 
     # Grabs the stock_id and stock_ticker from table called stocks
 c.execute('''  
-SELECT stock_id, stock_ticker FROM stocks
+SELECT stock_id, stock_ticker, stock_type FROM stocks
           ''')
 
 
     # For each stock_ticker it will connect to each library and update database
-for stock_id, stock_ticker in c.fetchall():
+for stock_id, stock_ticker, stock_type in c.fetchall():
 
-    time.sleep(60)
     stock_id = stock_id
     stock_ticker = stock_ticker
+    stock_type = stock_type
 
-    ### UPDATING DAILY PRICE DATA ###
-    ts = TimeSeries (key=api_key, output_format = "pandas")
-    data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
+    # ### UPDATING TABLE avData_daily ###
+    # ts = TimeSeries (key=api_key, output_format = "pandas")
+    # data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
 
-    for index, row in data_daily.iterrows():
-        daily_date = str(index)
-        daily_adjustedClosingPrice = row['5. adjusted close']
-        daily_tradingVolume = row['6. volume']
-        daily_lastDividendAmount = row['7. dividend amount']
+    # for index, row in data_daily.iterrows():
+    #     daily_date = str(index)
+    #     daily_adjustedClosingPrice = row['5. adjusted close']
+    #     daily_tradingVolume = row['6. volume']
+    #     daily_lastDividendAmount = row['7. dividend amount']
 
-        now = datetime.now()
-        daily_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+    #     now = datetime.now()
+    #     daily_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        c.execute("SELECT * FROM avData_daily where stock_id=? and daily_date=?", (stock_id, daily_date))
-        if (len(c.fetchall())) == 0: #it mean it dont exist
-            c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
+        # c.execute("SELECT * FROM avData_daily where stock_id=? and daily_date=?", (stock_id, daily_date))
+        # if (len(c.fetchall())) == 0: #it mean it dont exist
+        #     c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
     
-    
-    
-    conn.commit()
-    #print(stock_id, stock_ticker, daily_updateTime)    
-
-
-
-    ### UPDATING TABLE avData_overview ###
+    # conn.commit()
     # time.sleep(15)
-    # base_url = 'https://www.alphavantage.co/query?'
-    # params = {'function': 'OVERVIEW',
-    #         'symbol': stock_ticker,
-    #         'apikey': api_key}
-    # response_data_overview = requests.get(base_url, params=params)
 
-    # overview_assetType = response_data_overview.json()['AssetType']
-    # overview_marketCapitalization = response_data_overview.json()['MarketCapitalization']
-    # overview_updateTime = date.today()
 
+
+    ## UPDATING TABLE avData_overview ###
+    stock_check = "Stock"
+    if (stock_type) == "Stock": #checking if it's a stock or ETF
+
+        base_url = 'https://www.alphavantage.co/query?'
+        params = {'function': 'OVERVIEW',
+                'symbol': stock_ticker,
+                'apikey': api_key}
+        response_data_overview = requests.get(base_url, params=params)
+
+        overview_assetType = response_data_overview.json()['AssetType']
+        overview_marketCapitalization = response_data_overview.json()['MarketCapitalization']
+        now = datetime.now()
+        overview_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+    # c.execute("SELECT * FROM avData_daily where stock_id=?", (stock_id))
+    # if (len(c.fetchall())) == 0: #it mean it dont exist
+    #     c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
+
+    
+        c.execute("INSERT INTO avData_overview (stock_id, overview_assetType, overview_marketCapitalization, overview_updateTime) VALUES (?, ?, ?, ?) ON CONFLICT (stock_id) DO UPDATE SET overview_assetType = EXCLUDED.overview_assetType, overview_marketCapitalization = EXCLUDED.overview_marketCapitalization, overview_updateTime = EXCLUDED.overview_updateTime",(stock_id, overview_assetType, overview_marketCapitalization, overview_updateTime))
+        conn.commit()
     # update_table_avData_overview = """
     #     INSERT INTO avData_overview (stock_id,
     #                                 overview_assetType,
     #                                 overview_marketCapitalization,
     #                                 overview_updateTime        
     #                         )
-    #     VALUES (?, ?, ?)
+    #     VALUES (?, ?, ?, ?)
     #         ON CONFLICT (stock_id) DO UPDATE SET 
     #             overview_assetType = EXCLUDED.overview_assetType,
     #             overview_marketCapitalization = EXCLUDED.overview_marketCapitalization,
     #             overview_updateTime = EXCLUDED.overview_updateTime
     #     """
     # c.execute(update_table_avData_overview)
+        print(stock_id, stock_ticker, overview_marketCapitalization, overview_updateTime)
+        time.sleep(15)
+
+
+
+
+
+
+
+
 
     # ### UPDATING TABLE avData_income ###
     #     # https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo
