@@ -31,7 +31,7 @@ ti = TechIndicators (key=keys, output_format = "pandas")
 sp = SectorPerformances (key=keys, output_format = "pandas")
 av = AlphaVantage (key=keys, output_format = "pandas")
 
-demo = "N/A"
+demo = "N/A" 
 ### ^^^ DON'T EDIT ^^^ ###
 
 ### CALLING APIs FROM ALPHA VANTAGE TO ORGANIZE INTO INDIVIDUAL DATA POINTS ###
@@ -49,7 +49,7 @@ data_overview_Alpha = "need to make forumla"
 
     ### STOCK TIME SERIES > DAILY ADJUSTED ###
         # Date / Open / High / Low / Close / Adjusted Close / Volume / Dividend / Split
-data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='compact', interval=60)
+data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
         # data_daily['column name'][row number]
 data_daily_lastOpenPrice = data_daily['1. open'][0]
 data_daily_lastHighPrice = data_daily['2. high'][0]
