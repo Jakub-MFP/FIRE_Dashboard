@@ -15,39 +15,47 @@ import sqlite3
 from tabulate import tabulate
 from alpha_vantage.timeseries import TimeSeries
 
+
+
 ### CONNECTING TO DATABASE ###
 conn = sqlite3.connect('stockmarket.db')
 c = conn.cursor()
 api_key = 'S1CBJQPC92YX01S8'
 
+    # Grabs the stock_id and stock_ticker from table called stocks
 c.execute('''  
 SELECT stock_id, stock_ticker FROM stocks
           ''')
 
+
+    # For each stock_ticker it will connect to each library and update database
 for stock_id, stock_ticker in c.fetchall():
 
-
+    time.sleep(60)
     stock_id = stock_id
     stock_ticker = stock_ticker
 
+    ### UPDATING DAILY PRICE DATA ###
     ts = TimeSeries (key=api_key, output_format = "pandas")
     data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
 
     for index, row in data_daily.iterrows():
         daily_date = str(index)
-        daily_openPrice = str(row['1. open'])
-        daily_highPrice = str(row['2. high'])
-        daily_lowPrice = str(row['3. low'])
-        daily_adjustedClosingPrice = str(row['5. adjusted close'])
-        daily_tradingVolume = str(row['6. volume'])
-        daily_lastDividendAmount = str(row['7. dividend amount'])
+        daily_adjustedClosingPrice = row['5. adjusted close']
+        daily_tradingVolume = row['6. volume']
+        daily_lastDividendAmount = row['7. dividend amount']
 
         now = datetime.now()
-        daily_updateTime = now.strftime('%y-%m-%d %H:%M:%S')
+        daily_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_openPrice, daily_highPrice, daily_lowPrice, daily_adjustedClosingPrice, daily_tradingVolume,daily_updateTime) VALUES(?,?,?,?,?,?,?,?)", (stock_id, daily_date, daily_openPrice, daily_highPrice, daily_lowPrice, daily_adjustedClosingPrice, daily_tradingVolume, daily_updateTime))
+        c.execute("SELECT * FROM avData_daily where stock_id=? and daily_date=?", (stock_id, daily_date))
+        if (len(c.fetchall())) == 0: #it mean it dont exist
+            c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
+    
+    
+    
     conn.commit()
-    time.sleep(15)
+    #print(stock_id, stock_ticker, daily_updateTime)    
 
 
 
