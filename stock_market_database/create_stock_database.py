@@ -76,12 +76,11 @@ createTable_avData_income = """
             avData_income(
                 income_id INTEGER PRIMARY KEY,
                 stock_id INTEGER NOT NULL,
-                income_reportType TEXT NOT NULL,
-                income_reportID INTEGER NOT NULL,
-                income_reportYear INTEGER NOT NULL,
-                income_fiscialDateEnding DATE NOT NULL,
+                income_reportID INTEGER,
+                income_reportYear INTEGER ,
+                income_fiscalDateEnding DATE ,
                 income_totalRevenue INTEGER,
-                income_updateTime DATE NOT NULL,
+                income_updateTime DATE,
                 CONSTRAINT `avData_income` FOREIGN KEY (`stock_id`) REFERENCES `stocks` (`stock_id`)
             )
         """

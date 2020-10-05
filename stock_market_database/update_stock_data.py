@@ -24,7 +24,7 @@ api_key = 'S1CBJQPC92YX01S8'
 
     # Grabs the stock_id and stock_ticker from table called stocks
 c.execute('''  
-SELECT stock_id, stock_ticker, stock_type FROM stocks
+SELECT stock_id, stock_ticker, stock_type FROM stocks WHERE stock_id BETWEEN 1,5
           ''')
 
 
@@ -35,30 +35,30 @@ for stock_id, stock_ticker, stock_type in c.fetchall():
     stock_ticker = stock_ticker
     stock_type = stock_type
 
-    # ### UPDATING TABLE avData_daily ###
-    # ts = TimeSeries (key=api_key, output_format = "pandas")
-    # data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
 
-    # for index, row in data_daily.iterrows():
-    #     daily_date = str(index)
-    #     daily_adjustedClosingPrice = row['5. adjusted close']
-    #     daily_tradingVolume = row['6. volume']
-    #     daily_lastDividendAmount = row['7. dividend amount']
+    ### UPDATING TABLE avData_daily ###
+    ts = TimeSeries (key=api_key, output_format = "pandas")
+    data_daily, meta_data = ts.get_daily_adjusted(symbol=stock_ticker, outputsize ='full')
 
-    #     now = datetime.now()
-    #     daily_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+    for index, row in data_daily.iterrows():
+        daily_date = str(index)
+        daily_adjustedClosingPrice = row['5. adjusted close']
+        daily_tradingVolume = row['6. volume']
+        daily_lastDividendAmount = row['7. dividend amount']
 
-        # c.execute("SELECT * FROM avData_daily where stock_id=? and daily_date=?", (stock_id, daily_date))
-        # if (len(c.fetchall())) == 0: #it mean it dont exist
-        #     c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
-    
-    # conn.commit()
-    # time.sleep(15)
+        now = datetime.now()
+        daily_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+        c.execute("SELECT * FROM avData_daily where stock_id=? and daily_date=?", (stock_id, daily_date))
+        if (len(c.fetchall())) == 0: #it mean it dont exist
+            c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
+
+    print(stock_ticker)
+    conn.commit()
+    time.sleep(15)
 
 
-
-    ## UPDATING TABLE avData_overview ###
-    stock_check = "Stock"
+    ### UPDATING TABLE avData_overview ###
     if (stock_type) == "Stock": #checking if it's a stock or ETF
 
         base_url = 'https://www.alphavantage.co/query?'
@@ -71,85 +71,105 @@ for stock_id, stock_ticker, stock_type in c.fetchall():
         overview_marketCapitalization = response_data_overview.json()['MarketCapitalization']
         now = datetime.now()
         overview_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
-
-    # c.execute("SELECT * FROM avData_daily where stock_id=?", (stock_id))
-    # if (len(c.fetchall())) == 0: #it mean it dont exist
-    #     c.execute("INSERT INTO avData_daily (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime) VALUES(?,?,?,?,?,?)", (stock_id, daily_date, daily_adjustedClosingPrice, daily_tradingVolume, daily_lastDividendAmount, daily_updateTime))
-
     
         c.execute("INSERT INTO avData_overview (stock_id, overview_assetType, overview_marketCapitalization, overview_updateTime) VALUES (?, ?, ?, ?) ON CONFLICT (stock_id) DO UPDATE SET overview_assetType = EXCLUDED.overview_assetType, overview_marketCapitalization = EXCLUDED.overview_marketCapitalization, overview_updateTime = EXCLUDED.overview_updateTime",(stock_id, overview_assetType, overview_marketCapitalization, overview_updateTime))
         conn.commit()
-    # update_table_avData_overview = """
-    #     INSERT INTO avData_overview (stock_id,
-    #                                 overview_assetType,
-    #                                 overview_marketCapitalization,
-    #                                 overview_updateTime        
-    #                         )
-    #     VALUES (?, ?, ?, ?)
-    #         ON CONFLICT (stock_id) DO UPDATE SET 
-    #             overview_assetType = EXCLUDED.overview_assetType,
-    #             overview_marketCapitalization = EXCLUDED.overview_marketCapitalization,
-    #             overview_updateTime = EXCLUDED.overview_updateTime
-    #     """
-    # c.execute(update_table_avData_overview)
+
         print(stock_id, stock_ticker, overview_marketCapitalization, overview_updateTime)
         time.sleep(15)
 
 
+    ### UPDATING TABLE avData_income ###
+        # https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo
+        # We can have data be <annual> or <quarterly> 
+        # date is "fiscalDateEnding"
+    response_range = np.arange(0,50,1) #setting possible inputs for json
+
+    if (stock_type) == "Stock": #checking if it's a stock or ETF
+
+        base_url = 'https://www.alphavantage.co/query?'
+        params = {'function': 'INCOME_STATEMENT',
+                'symbol': stock_ticker,
+                'apikey': api_key}
+        response = requests.get(base_url, params=params)
+
+        try:
+            for i in response_range:
+                income_fiscalDateEnding = response.json()['annualReports'][i]['fiscalDateEnding']
+                income_reportID  = 5
+                income_reportYear = str(income_fiscalDateEnding[0:4])
+                income_totalRevenue = response.json()['annualReports'][i]['totalRevenue']
+                
+                now = datetime.now()
+                income_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+                c.execute("SELECT * FROM avData_income where stock_id=? and income_fiscalDateEnding=?", (stock_id, income_fiscalDateEnding))
+                if (len(c.fetchall())) == 0: #it mean it dont exist
+                    c.execute("INSERT INTO avData_income (stock_id, income_reportID , income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime) VALUES (?, ?, ?, ?, ?, ?)",(stock_id, income_reportID , income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime))
+                conn.commit()
+
+                #print(income_fiscalDateEnding,income_report_id, income_reportYear, income_totalRevenue, income_updateTime)
+        except IndexError:
+            print('No More Annual Reports')
+
+        try:
+            for i in response_range:
+                income_fiscalDateEnding = str(response.json()['quarterlyReports'][i]['fiscalDateEnding'])
+                fiscalDate = str(income_fiscalDateEnding[5:10])
+                if (fiscalDate) == '03-31':
+                    income_reportID = 1
+                if (fiscalDate) == '06-30':
+                    income_reportID  = 2
+                if (fiscalDate) == '09-30':
+                    income_reportID  = 3
+                if (fiscalDate) == '12-31':
+                    income_reportID  = 4
+                income_reportYear = str(income_fiscalDateEnding[0:4])
+                income_totalRevenue = response.json()['quarterlyReports'][i]['totalRevenue']
+                
+                now = datetime.now()
+                income_updateTime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+                c.execute("SELECT * FROM avData_income where stock_id=? and income_fiscalDateEnding=?", (stock_id, income_fiscalDateEnding))
+                if (len(c.fetchall())) == 0: #it mean it dont exist
+                    c.execute("INSERT INTO avData_income (stock_id, income_reportID , income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime) VALUES (?, ?, ?, ?, ?, ?)",(stock_id, income_reportID , income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime))
+                conn.commit()
+
+                #print(fiscalDateEnding,income_report_id, income_reportYear, income_totalRevenue, income_updateTime)
+        except IndexError:
+            print('No More Quarterly Reports')
+
+        time.sleep(15)
+        print(stock_ticker)
+        # c.execute("SELECT * FROM avData_daily where stock_id=? and income_fiscalDateEnding=?", (stock_id, income_fiscalDateEnding))
+        # if (len(c.fetchall())) == 0: #it mean it dont exist
+        #     c.execute("INSERT INTO avData_income (stock_id, income_report_id, income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime) VALUES (?, ?, ?, ?, ?, ?)",(stock_id, income_report_id, income_reportYear, income_fiscalDateEnding, income_totalRevenue, income_updateTime))
+
+        
 
 
 
-
-
-
-
-    # ### UPDATING TABLE avData_income ###
-    #     # https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol=IBM&apikey=demo
-    #     # We can have data be <annual> or <quarterly> 
-    #     # date is "fiscalDateEnding"
-    # time.sleep(15)
-    # base_url = 'https://www.alphavantage.co/query?'
-    # params = {'function': 'INCOME_STATEMENT',
-    #         'symbol': stock_ticker,
-    #         'apikey': keys}
-    # response_data_income = requests.get(base_url, params=params)
-
-    #     # No idea on how to interact with this JSON in a meaningful way. 
-    #     # To get more recent information it would be
-    #         #data_income_annual_last_fiscalDateEnding = response_data_income.json()['annualReports'][0]['fiscalDateEnding']
-
-    #     # idk if there is a way to create this into a dataframe or something
-
-    # income_reportType = 1 #This could be (1,5) if its an 'quarterlyReport' than its a 1, if its 'annualReports' than its a 5
-    # income_reportId = 1 # This could be (1,2,3,4,5) if Report Type is 5, than this will also be 5. Otherwise I want to set which quarter the report is for. Might need to set ranges if the fiscalDateNeding falls between  Jan 1 to March 31  than tis report id is 1. 
-    # income_reportYear = 2020 #this will be the year from the fiscalDateEnding
-
-    #     #idk how to set these, i just know how to make it the most recent one
-    # income_fiscalDateEnding = response_data_income.json()['annualReports'][0]['fiscalDateEnding']
-    # income_totalRevenue = response_data_income.json()['annualReports'][0]['totalRevenue']
-    # income_updateTime = date.today()
-
-
-    # update_table_avData_income = """
-    #     INSERT INTO avData_income (income_fiscalDateEnding,
-    #                             stock_id,
-    #                             income_reportType,
-    #                             income_reportId,
-    #                             income_reportYear,
-    #                             income_totalRevenue,
-    #                             income_updateTime
-    #                         )
-    #     VALUES (?, ?, ?, ?, ?, ?)
-    #         ON CONFLICT (income_fiscalDateEnding) DO UPDATE SET 
-    #             stock_id = EXCLUDED.stock_id,
-    #             income_reportType = EXCLUDED.income_reportType,
-    #             income_reportId = EXCLUDED.income_reportId,
-    #             income_reportYear = EXCLUDED.income_report_Year,
-    #             income_totalRevenue = EXCLUDED.income_totalRevenue,
-    #             income_updateTime = EXCLUDED.income_updateTime
-    #     """
-    # c.execute(update_table_avData_income)
-
+#         update_table_avData_income = """
+#             INSERT INTO avData_income (income_fiscalDateEnding,
+#                                     stock_id,
+#                                     income_reportType,
+#                                     income_reportId,
+#                                     income_reportYear,
+#                                     income_totalRevenue,
+#                                     income_updateTime
+#                                 )
+#             VALUES (?, ?, ?, ?, ?, ?)
+#                 ON CONFLICT (income_fiscalDateEnding) DO UPDATE SET 
+#                     stock_id = EXCLUDED.stock_id,
+#                     income_reportType = EXCLUDED.income_reportType,
+#                     income_reportId = EXCLUDED.income_reportId,
+#                     income_reportYear = EXCLUDED.income_report_Year,
+#                     income_totalRevenue = EXCLUDED.income_totalRevenue,
+#                     income_updateTime = EXCLUDED.income_updateTime
+#             """
+#         c.execute(update_table_avData_income)
+#         conn.commit()
+#         time.sleep(15)
 
 c.close()
 conn.close()
